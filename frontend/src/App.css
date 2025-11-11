@@ -1,0 +1,177 @@
+/* === Thème clair / sombre === */
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --brand: #dc2626;
+  --primary: #dc2626;
+  --btn-muted-bg: #f9fafb;
+  --link: #dc2626;
+  --nav-bg: #f9fafb;
+  --nav-active-bg: #ffe4e6;
+  --thead-bg: #f3f4f6;
+  --thead-text: #111827;
+}
+
+.dark {
+  --bg: #0f1115;
+  --card: #15181d;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --border: #2a2f36;
+  --brand: #ff6b6b;
+  --primary: #ef4444;
+  --btn-muted-bg: #1a1f25;
+  --link: #ff6b6b;
+  --nav-bg: #181b1f;
+  --nav-active-bg: #2a2f36;
+  --thead-bg: #1e232a;
+  --thead-text: #ffffff;
+}
+
+/* === Styles de base === */
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* === Header / Navbar === */
+.header {
+  background: var(--nav-bg);
+  color: var(--brand);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.header .inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+}
+.brand-link {
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 8px;
+}
+
+/* === Liens de navigation === */
+.nav {
+  display: flex;
+  gap: 16px;
+}
+.nav-link {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.nav-link.active {
+  background: var(--nav-active-bg);
+}
+
+/* === Boutons === */
+.btn {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.btn-muted {
+  background: var(--btn-muted-bg);
+  color: var(--brand);
+  border-color: var(--brand);
+}
+
+/* === Cartes / Inputs / Table === */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.input, .select {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.input::placeholder {
+  color: var(--muted);
+}
+
+/* === Tables === */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.table thead th {
+  background: var(--thead-bg);
+  color: var(--thead-text);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 10px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+.table tbody td {
+  background: var(--card);
+  color: var(--text);
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.badge {
+  background: #f3f4f6;
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+.dark .badge {
+  background: #20242b;
+}
+
+/* === Transition globale === */
+* {
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+@keyframes floatPizza {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.pizza-float {
+  animation: floatPizza 3s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+
+.pizza-float:hover {
+  transform: scale(1.05) rotate(2deg);
+}
