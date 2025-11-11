@@ -169,22 +169,22 @@ body{
 .dark .tile:nth-child(2){ background:linear-gradient(140deg,#17181b,#22242a); }
 .dark .tile:nth-child(3){ background:linear-gradient(140deg,#991b1b,#6b0f14); }
 
-/* جدول الأدمن */
 .dark .table th, .dark .table td { border-bottom-color:#23252b; }
-/* ألوان النصوص في الهيرو (الوضع العادي) */
-.hero h1 { color: #0b0d12; }        /* أسود غامق */
-.hero p  { color: #5b616e; }        /* رمادي */
 
-/* نفس النصوص في الوضع الداكن */
-.dark .hero h1 { color: #ffffff; }  /* أبيض */
-.dark .hero p  { color: #c7cbd3; }  /* رمادي فاتح مقروء */
+.hero h1 { color: #0b0d12; }        
+.hero p  { color: #5b616e; }       
+
+
+
+.dark .hero h1 { color: #ffffff; }  
+.dark .hero p  { color: #c7cbd3; }
 .brand a {
-  color: #111;               /* عادي في الوضع الفاتح */
+  color: #111;           
   text-decoration: none;
   font-weight: 800;
   font-size: 20px;
 }
 
 .dark .brand a {
-  color: #ffffff;            /* أبيض في الوضع الداكن */
+  color: #ffffff;            
 }
