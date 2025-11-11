@@ -29,3 +29,7 @@ export const deleteUser = (id) =>
   API.delete(`/users/${id}`, { // <-- was "/admin/users/:id"
     headers: { Authorization: "Bearer " + localStorage.getItem("token") },
   });
+  export const updateUserRole = (id, role) => {
+  return axios.patch(`/api/users/${id}/role`, { role });
+};
+

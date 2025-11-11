@@ -193,4 +193,27 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: "Error resetting password" });
   }
 };
+// ADMIN: Update user role
+exports.updateUserRole = async (req, res) => {
+  try {
+    if (req.user.role !== "admin")
+      return res.status(403).json({ message: "Not authorized" });
+
+    const { role } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Protect the super-admin
+    if (user.email === "maramkhalil@gmail.com") {
+      return res.status(403).json({ message: "Modification impossible sur ce compte." });
+    }
+
+    user.role = role;
+    await user.save();
+
+    res.json({ message: "Rôle mis à jour avec succès", user: { ...user.toObject(), password: undefined } });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 

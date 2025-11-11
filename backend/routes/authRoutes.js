@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-// Correct import: matches your actual filename "authControllers.js"
 const {
   register,
   login,
@@ -11,7 +10,8 @@ const {
   addUser,
   deleteUser,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  updateUserRole
 } = require("../controllers/authController");
 
 const authMiddleware = require("../middleware/authMiddleware");
@@ -30,5 +30,6 @@ router.put("/me", authMiddleware, updateMe);
 router.get("/users", authMiddleware, getUsers);
 router.post("/users", authMiddleware, addUser);
 router.delete("/users/:id", authMiddleware, deleteUser);
+router.patch("/users/:id/role", authMiddleware, updateUserRole);
 
 module.exports = router;
