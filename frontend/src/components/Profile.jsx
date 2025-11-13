@@ -1,4 +1,3 @@
-// src/components/Profile.jsx
 import { useState, useEffect } from "react";
 import { getMe, updateMe } from "../services/auth";
 
@@ -17,6 +16,17 @@ export default function Profile() {
   const [preview, setPreview] = useState(""); // Base64 or URL
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
+
+  // Auto-hide messages
+  useEffect(() => {
+    if (msg || error) {
+      const timer = setTimeout(() => {
+        setMsg("");
+        setError("");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [msg, error]);
 
   // Load user profile
   useEffect(() => {
@@ -51,7 +61,6 @@ export default function Profile() {
     let imageBase64 = preview;
 
     if (image) {
-      // Convert image file to Base64
       const reader = new FileReader();
       reader.readAsDataURL(image);
       await new Promise((resolve) => {
@@ -63,7 +72,6 @@ export default function Profile() {
     }
 
     try {
-      // Remove email from payload to prevent accidental update
       const payload = { ...form, image: imageBase64 };
       delete payload.email;
 
@@ -73,7 +81,7 @@ export default function Profile() {
       setPreview(data.image || preview);
       setForm({ ...form, ...data });
       localStorage.setItem("user", JSON.stringify(data)); // persist session data
-      setImage(null); // reset file input
+      setImage(null);
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Erreur lors de la mise à jour");
@@ -99,12 +107,12 @@ export default function Profile() {
       <h2 style={{ color: "#b91c1c", marginBottom: 20 }}>Mon Profil</h2>
 
       {msg && (
-        <div style={{ background: "#d1fae5", color: "#065f46", padding: "10px 12px", borderRadius: 12 }}>
+        <div style={{ background: "#d1fae5", color: "#065f46", padding: "10px 12px", borderRadius: 12, marginBottom: 12 }}>
           {msg}
         </div>
       )}
       {error && (
-        <div style={{ background: "#fee2e2", color: "#b91c1c", padding: "10px 12px", borderRadius: 12 }}>
+        <div style={{ background: "#fee2e2", color: "#b91c1c", padding: "10px 12px", borderRadius: 12, marginBottom: 12 }}>
           {error}
         </div>
       )}

@@ -3,7 +3,7 @@ require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const User = require("../models/User"); // adjust path if needed
 
-const adminEmail = "maramkhalil@gmail.com";
+const adminEmail = "admin@gmail.com";
 const adminPassword = "258369147";
 
 const connectDB = async () => {

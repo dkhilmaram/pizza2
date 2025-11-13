@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { listUsers, addUser, deleteUser } from "../services/auth";
-import { getOrders } from "../services/orders";
 import ConfirmModal from "./ConfirmModal";
+import { listUsers, addUser, deleteUser, updateUserRole } from "../services/admin";
+import { getOrders } from "../services/orders";
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
-  const [newUser, setNewUser] = useState({ name: "", email: "", password: "", role: "user" });
+  const [newUser, setNewUser] = useState({ name: "", email: "", password: "", phone: "", address: "", gender: "", role: "user" });
   const [userMsg, setUserMsg] = useState("");
   const [orders, setOrders] = useState([]);
   const [orderMsg, setOrderMsg] = useState("");
@@ -18,7 +18,7 @@ export default function AdminDashboard() {
   const [selectedRoleUserId, setSelectedRoleUserId] = useState(null);
   const [targetRole, setTargetRole] = useState("");
 
-  // Load users from backend
+  // Load users
   const loadUsers = async () => {
     try {
       const { data } = await listUsers();
@@ -28,7 +28,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // Load orders from backend
+  // Load orders
   const loadOrders = async () => {
     try {
       const { data } = await getOrders();
@@ -61,13 +61,13 @@ export default function AdminDashboard() {
   // Add new user
   const handleAddUser = async () => {
     if (!newUser.name || !newUser.email || !newUser.password) {
-      setUserMsg("Please fill all fields.");
+      setUserMsg("Please fill all required fields.");
       return;
     }
     try {
       await addUser(newUser);
       setUserMsg("User added successfully!");
-      setNewUser({ name: "", email: "", password: "", role: "user" });
+      setNewUser({ name: "", email: "", password: "", phone: "", address: "", gender: "", role: "user" });
       loadUsers();
     } catch (err) {
       setUserMsg(err.response?.data?.message || "Error adding user.");
@@ -88,6 +88,8 @@ export default function AdminDashboard() {
       loadUsers();
     } catch (err) {
       setUserMsg(err.response?.data?.message || "Error deleting user.");
+    } finally {
+      setSelectedUserId(null);
     }
   };
 
@@ -105,27 +107,16 @@ export default function AdminDashboard() {
 
   const confirmRoleChange = async () => {
     try {
-      const userId = selectedRoleUserId;
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/users/${userId}/role`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`
-        },
-        body: JSON.stringify({ role: targetRole })
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Error");
+      await updateUserRole(selectedRoleUserId, targetRole);
 
       // Update local state
       const updatedUsers = users.map(u =>
-        u._id === userId ? { ...u, role: targetRole } : u
+        u._id === selectedRoleUserId ? { ...u, role: targetRole } : u
       );
       setUsers(updatedUsers);
-      setUserMsg(data.message);
+      setUserMsg(`Rôle mis à jour vers ${targetRole}`);
     } catch (err) {
-      setUserMsg(err.message);
+      setUserMsg(err.response?.data?.message || err.message || "Erreur lors de la mise à jour");
     } finally {
       setShowRoleConfirm(false);
       setSelectedRoleUserId(null);
@@ -133,10 +124,12 @@ export default function AdminDashboard() {
     }
   };
 
-  // Filter users by search
+  // Filter users
   const filteredUsers = users.filter(u =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||
-    u.email.toLowerCase().includes(search.toLowerCase())
+    u.email.toLowerCase().includes(search.toLowerCase()) ||
+    u.phone?.toLowerCase().includes(search.toLowerCase()) ||
+    u.address?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -162,17 +155,22 @@ export default function AdminDashboard() {
       )}
 
       {/* User message */}
-      {userMsg && (
-        <div className="message">{userMsg}</div>
-      )}
+      {userMsg && <div className="message">{userMsg}</div>}
 
-      {/* Add user section */}
+      {/* Add user */}
       <div className="card" style={{ padding: 20 }}>
         <h3>Add New User</h3>
         <div style={{ display: "grid", gap: 10, marginBottom: 20 }}>
           <input className="input" placeholder="Name" value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} />
           <input className="input" placeholder="Email" value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
           <input className="input" type="password" placeholder="Password" value={newUser.password} onChange={e => setNewUser({ ...newUser, password: e.target.value })} />
+          <input className="input" placeholder="Phone" value={newUser.phone} onChange={e => setNewUser({ ...newUser, phone: e.target.value })} />
+          <input className="input" placeholder="Address" value={newUser.address} onChange={e => setNewUser({ ...newUser, address: e.target.value })} />
+          <select className="select" value={newUser.gender} onChange={e => setNewUser({ ...newUser, gender: e.target.value })}>
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
           <select className="select" value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })}>
             <option value="user">User</option>
             <option value="admin">Admin</option>
@@ -184,52 +182,74 @@ export default function AdminDashboard() {
         <input className="input" placeholder="Search users..." value={search} onChange={e => setSearch(e.target.value)} style={{ marginBottom: 12 }} />
 
         {/* Users table */}
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.length > 0 ? filteredUsers.map(u => (
-              <tr key={u._id}>
-                <td>{u.name}</td>
-                <td>{u.email}</td>
-                <td>
-                  <span className={`badge ${u.role === "admin" ? "badge-admin" : "badge-user"}`}>
-                    {u.role}
-                  </span>
-                </td>
-                <td>
-                  {u.email !== "maramkhalil@gmail.com" ? (
-                    <>
-                      <button className="btn btn-warning" onClick={() => handleAskRoleChange(u._id, u.role)} style={{ marginRight: 6 }}>
-                        Edit Role
-                      </button>
-                      {u.role !== "admin" && (
-                        <button className="btn btn-primary" onClick={() => handleAskDelete(u._id)}>
-                          Delete
-                        </button>
-                      )}
-                    </>
-                  ) : (
-                    <span style={{ color: "#888" }}>Protected Account</span>
-                  )}
-                </td>
-              </tr>
-            )) : (
-              <tr>
-                <td colSpan="4" style={{ padding: "12px", textAlign: "center" }}>No users found.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        {/* Users table */}
+<table className="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Address</th>
+      <th>Gender</th>
+      <th>Role</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {filteredUsers.length > 0 ? filteredUsers.map(u => (
+      <tr key={u._id}>
+        <td>{u.name}</td>
+        <td>{u.email}</td>
+        <td>{u.phone || "-"}</td>
+        <td>{u.address || "-"}</td>
+        <td>{u.gender || "-"}</td>
+        <td>
+          <span
+            style={{
+              padding: "4px 10px",
+              borderRadius: 8,
+              color: "#fff",
+              backgroundColor: u.role === "admin" ? "#b91c1c" : "#16a34a",
+              fontWeight: 600,
+              textTransform: "capitalize",
+              fontSize: 12,
+            }}
+          >
+            {u.role}
+          </span>
+        </td>
+        <td>
+          {u.email !== "admin@gmail.com" ? (
+            <>
+              <button
+                className="btn btn-warning"
+                onClick={() => handleAskRoleChange(u._id, u.role)}
+                style={{ marginRight: 6 }}
+              >
+                Edit Role
+              </button>
+              {u.role !== "admin" && (
+                <button className="btn btn-primary" onClick={() => handleAskDelete(u._id)}>
+                  Delete
+                </button>
+              )}
+            </>
+          ) : (
+            <span style={{ color: "#888" }}>Protected Account</span>
+          )}
+        </td>
+      </tr>
+    )) : (
+      <tr>
+        <td colSpan="7" style={{ padding: "12px", textAlign: "center" }}>No users found.</td>
+      </tr>
+    )}
+  </tbody>
+</table>
+
       </div>
 
-      {/* Orders section */}
+      {/* Orders */}
       <div className="card" style={{ padding: 20 }}>
         <h3>Orders</h3>
         {orderMsg && <div className="message">{orderMsg}</div>}

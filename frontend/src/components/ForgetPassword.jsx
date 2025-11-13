@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function ForgotPassword() {
@@ -8,6 +8,16 @@ export default function ForgotPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [step, setStep] = useState(1); // Step 1: send code, Step 2: reset password
   const [msg, setMsg] = useState("");
+  const [isError, setIsError] = useState(false);
+  const navigate = useNavigate();
+
+  // Auto-hide message after 3 seconds
+  useEffect(() => {
+    if (msg) {
+      const timer = setTimeout(() => setMsg(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [msg]);
 
   const sendCode = async () => {
     setMsg("");
@@ -15,8 +25,10 @@ export default function ForgotPassword() {
       const res = await axios.post("http://localhost:5000/api/auth/forgot-password", { email });
       setStep(2);
       setMsg(res.data.message || "Reset code sent! Check your email.");
+      setIsError(false); // success message
     } catch (err) {
       setMsg(err.response?.data?.message || "Error sending code");
+      setIsError(true); // error message
     }
   };
 
@@ -29,12 +41,18 @@ export default function ForgotPassword() {
         newPassword,
       });
       setMsg(res.data.message || "Password reset successful!");
+      setIsError(false); // success message
+      // Redirect to login after 2 seconds
+      setTimeout(() => navigate("/login"), 2000);
+
+      // Reset form
       setStep(1);
       setEmail("");
       setCode("");
       setNewPassword("");
     } catch (err) {
       setMsg(err.response?.data?.message || "Error resetting password");
+      setIsError(true); // error message
     }
   };
 
@@ -42,8 +60,18 @@ export default function ForgotPassword() {
     <div className="container-page" style={{ paddingTop: 40 }}>
       <div className="card" style={{ maxWidth: 420, margin: "0 auto" }}>
         <h2>Password Reset</h2>
+
         {msg && (
-          <div style={{ background: "#ffe5e9", color: "#9f1239", padding: "10px", borderRadius: 12 }}>
+          <div
+            style={{
+              background: isError ? "#fee2e2" : "#d1fae5",
+              color: isError ? "#b91c1c" : "#065f46",
+              padding: "10px",
+              borderRadius: 12,
+              marginBottom: 12,
+              transition: "opacity 0.5s",
+            }}
+          >
             {msg}
           </div>
         )}

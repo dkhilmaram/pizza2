@@ -1,35 +1,18 @@
-import axios from "axios";
+// src/services/auth.js
+import api from "./api";
 
-const API = axios.create({ baseURL: "http://localhost:5000/api/auth" });
+// Public routes
+export const register = (data) => api.post("/auth/register", data);
+export const login = (data) => api.post("/auth/login", data);
+export const forgotPassword = (data) => api.post("/auth/forgot-password", data);
+export const resetPassword = (data) => api.post("/auth/reset-password", data);
 
-// Auth routes
-export const register = (data) => API.post("/register", data);
-export const login = (data) => API.post("/login", data);
-export const getMe = () =>
-  API.get("/me", {
-    headers: { Authorization: "Bearer " + localStorage.getItem("token") },
-  });
-export const updateMe = (data) =>
-  API.put("/me", data, {
-    headers: { Authorization: "Bearer " + localStorage.getItem("token") },
-  });
+// Profile routes (user)
+export const getMe = () => api.get("/user/me");
+export const updateMe = (data) => api.put("/user/me", data);
 
-// Admin routes — fix the path here to match backend
-export const listUsers = () =>
-  API.get("/users", { // <-- was "/admin/users"
-    headers: { Authorization: "Bearer " + localStorage.getItem("token") },
-  });
-
-export const addUser = (data) =>
-  API.post("/users", data, { // <-- was "/admin/users"
-    headers: { Authorization: "Bearer " + localStorage.getItem("token") },
-  });
-
-export const deleteUser = (id) =>
-  API.delete(`/users/${id}`, { // <-- was "/admin/users/:id"
-    headers: { Authorization: "Bearer " + localStorage.getItem("token") },
-  });
-  export const updateUserRole = (id, role) => {
-  return axios.patch(`/api/users/${id}/role`, { role });
-};
-
+// Admin routes
+export const listUsers = () => api.get("/admin/users");
+export const addUser = (data) => api.post("/admin/users", data);
+export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
+export const updateUserRole = (id, role) => api.patch(`/admin/users/${id}/role`, { role });
