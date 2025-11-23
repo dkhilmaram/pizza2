@@ -65,10 +65,10 @@ exports.forgotPassword = async (req, res) => {
 
     const code = Math.random().toString(36).substring(2, 10).toUpperCase();
     user.resetCode = code;
-    user.resetCodeExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+    user.resetCodeExpires = new Date(Date.now() +  60 * 1000); // 
     await user.save();
 
-    await sendEmail(user.email, "Your Password Reset Code", `<p>Your code is: <b>${code}</b> (valid for 15 minutes)</p>`);
+    await sendEmail(user.email, "Your Password Reset Code", `<p>Your code is: <b>${code}</b> (valid for one minute)</p>`);
 
     res.json({ message: "Reset code sent to email" });
   } catch (err) {

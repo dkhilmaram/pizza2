@@ -1,96 +1,128 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-export default function Welcome() {
+export default function Welcome({ darkMode }) {
+  const { t } = useTranslation();
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
+  const smallCardStyle = {
+    padding: "20px",
+    borderRadius: "15px",
+    textAlign: "center",
+    flex: 1,
+    margin: "0 10px",
+    cursor: "pointer",
+    transition: "all 0.3s",
+  };
+
+  const smallCardButtonStyle = {
+    marginTop: "10px",
+    padding: "8px 15px",
+    borderRadius: "8px",
+    fontWeight: "bold",
+    border: "none",
+    cursor: "pointer",
+    textDecoration: "none",
+    backgroundColor: "#ea2828ff",
+    color: "#f9ededff",
+  };
+
+  const smallCards = [
+    { title: t("customer_reviews"), path: "/reviews", desc: t("customer_reviews_desc") },
+    { title: t("promotions"), path: "/promotions", desc: t("promotions_desc") },
+    { title: t("menu"), path: "/menu", desc: t("menu_desc") },
+  ];
+
   return (
-    <div className="hero">
-      <div
-        className="wrap"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-        }}
-      >
-        {/* Section Texte */}
-        <div style={{ maxWidth: "500px" }}>
-          <div className="badges" style={{ marginBottom: "10px" }}>
-            <span className="badge red" style={{ marginRight: 5 }}>
-              Nouveau
-            </span>
-            <span className="badge">Livraison express</span>
-          </div>
-
-          <h1 style={{ fontSize: "2rem", marginBottom: "15px", fontWeight: "bold" }}>
-            Votre pizza, chaude et croustillante, en quelques clics 🍕
-          </h1>
-
-          <p style={{ fontSize: "1.1rem", marginBottom: "20px", opacity: 0.9 }}>
-            Composez, personnalisez et recommandez votre favorite. Simple, rapide et délicieux.
-          </p>
-
-          <div className="cta">
-            {!user ? (
-              <>
-                <Link to="/login" className="btn btn-primary" style={{ marginRight: 10 }}>
-                  Commencer
-                </Link>
-                <Link to="/register" className="btn btn-muted">
-                  Créer un compte
-                </Link>
-              </>
-            ) : (
+    <div className="welcome-page">
+      <div className="hero">
+        <div className="wrap">
+          <div style={{ maxWidth: "500px" }}>
+            
+            {/* ------ FIXED ONLY THIS PART ------ */}
+            <div className="badges" style={{ marginBottom: "10px" }}>
               <Link
-                to="/pizza"
-                className="btn btn-primary"
-                style={{
-                  fontWeight: "bold",
-                  padding: "10px 20px",
-                  borderRadius: "8px",
-                }}
+                to={user ? "/new" : "/login"}
+                className="badge red"
+                style={{ textDecoration: "none" }}
               >
-                🍕 Mes commandes de pizza
+                {t("new")}
               </Link>
-            )}
-          </div>
-        </div>
 
-        {/* Image de Pizza */}
-        <div
-          className="hero-visual"
-          style={{
-            maxWidth: "400px",
-            marginTop: "20px",
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <img
-            src="/images/pizza-hero.png"
-            alt="Pizza"
-            className="pizza-float"
-            style={{
-              width: "100%",
-              borderRadius: "15px",
-              filter: "drop-shadow(0px 5px 10px rgba(0,0,0,0.2))",
-            }}
-            onError={(e) => {
-              e.currentTarget.replaceWith(
-                Object.assign(document.createElement("div"), {
-                  className: "pizza-fallback",
-                  innerText: "🍕",
-                  style: "font-size:80px; text-align:center;",
-                })
-                
-              );
-            }}
-          />
+              <Link
+                to={user ? "/express" : "/login"}
+                className="badge"
+                style={{ textDecoration: "none" }}
+              >
+                {t("express_delivery")}
+              </Link>
+            </div>
+            {/* ----------------------------------- */}
+
+            <h1>{t("hero_title")} 🍕</h1>
+            <p>{t("hero_subtitle")}</p>
+
+            <div className="cta" style={{ gap: "10px", flexWrap: "wrap" }}>
+              {!user ? (
+                <>
+                  <Link to="/login" className="btn btn-primary">
+                    {t("start")}
+                  </Link>
+                  <Link to="/register" className="btn btn-primary">
+                    {t("create_account")}
+                  </Link>
+                </>
+              ) : (
+                <Link to="/orders" className="btn btn-primary">
+                  {t("see my orders")}
+                </Link>
+              )}
+            </div>
+          </div>
+
+          <div className="hero-visual">
+            <img
+              src="/images/pizza-hero.png"
+              alt="Pizza"
+              className="pizza-img"
+              onError={(e) => {
+                e.currentTarget.replaceWith(
+                  Object.assign(document.createElement("div"), {
+                    className: "pizza-fallback",
+                    innerText: "🍕",
+                    style: "font-size:80px; text-align:center;",
+                  })
+                );
+              }}
+            />
+          </div>
         </div>
       </div>
+
+      <div
+        className="small-hero-section"
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "40px",
+          gap: "20px",
+        }}
+      >
+        {smallCards.map((card, i) => (
+          <div
+            key={i}
+            className={`card ${darkMode ? "dark" : ""}`}
+            style={smallCardStyle}
+          >
+            <h3>{card.title}</h3>
+            <p>{card.desc}</p>
+            <Link className="btn" style={smallCardButtonStyle} to={user ? card.path : "/login"}>
+              {t("see_more")}
+            </Link>
+          </div>
+        ))}
+      </div>
     </div>
-    
   );
 }

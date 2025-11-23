@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getOrders } from "../services/orders";
-import AdminUsers from "./AdminUsers";
 
 export default function SeeOrders() {
   const [orders, setOrders] = useState([]);
@@ -17,11 +16,6 @@ export default function SeeOrders() {
   return (
     <div style={{ padding: 24 }}>
       <h1>Admin Dashboard - Orders</h1>
-
-      {/* Admin: Add User section */}
-      <div style={{ marginBottom: 24 }}>
-        <AdminUsers />
-      </div>
 
       <h2>All Orders</h2>
       <table className="table">

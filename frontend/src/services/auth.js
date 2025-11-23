@@ -11,8 +11,4 @@ export const resetPassword = (data) => api.post("/auth/reset-password", data);
 export const getMe = () => api.get("/user/me");
 export const updateMe = (data) => api.put("/user/me", data);
 
-// Admin routes
-export const listUsers = () => api.get("/admin/users");
-export const addUser = (data) => api.post("/admin/users", data);
-export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
-export const updateUserRole = (id, role) => api.patch(`/admin/users/${id}/role`, { role });
+

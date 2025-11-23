@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../services/auth";
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
+  const { t } = useTranslation();
   const [form, setForm] = useState({ email: "", password: "" });
   const [err, setErr] = useState("");
   const navigate = useNavigate();
@@ -16,15 +18,15 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(data.user));
       navigate("/profile"); // Redirect to the profile page
     } catch (e) {
-      setErr(e?.response?.data?.message || "Login failed");
+      setErr(e?.response?.data?.message || t("login_failed"));
     }
   };
 
   return (
     <div className="container-page" style={{ paddingTop: 40 }}>
       <div className="card" style={{ maxWidth: 420, margin: "0 auto" }}>
-        <h2 style={{ margin: "0 0 6px 0", fontWeight: 800 }}>Login</h2>
-        <p className="helper" style={{ marginBottom: 16 }}>Access your account</p>
+        <h2 style={{ margin: "0 0 6px 0", fontWeight: 800 }}>{t("login")}</h2>
+        <p className="helper" style={{ marginBottom: 16 }}>{t("access_account")}</p>
         {err && (
           <div style={{ background: '#ffe5e9', color: '#9f1239', padding: '10px 12px', borderRadius: 12, marginBottom: 10 }}>
             {err}
@@ -34,26 +36,26 @@ export default function Login() {
           <input
             className="input"
             type="email"
-            placeholder="Email Address"
+            placeholder={t("email_address")}
             value={form.email}
             onChange={e => setForm({ ...form, email: e.target.value })}
           />
           <input
             className="input"
             type="password"
-            placeholder="Password"
+            placeholder={t("password")}
             value={form.password}
             onChange={e => setForm({ ...form, password: e.target.value })}
           />
-          <button className="btn btn-primary" type="submit">Login</button>
+          <button className="btn btn-primary" type="submit">{t("login")}</button>
         </form>
 
         <p className="helper" style={{ marginTop: 12 }}>
-          <Link to="/forgot-password">Forgot Password?</Link>
+          <Link to="/forgot-password">{t("forgot_password")}</Link>
         </p>
 
         <p className="helper" style={{ marginTop: 12 }}>
-          Don't have an account? <Link to="/register">Create an account</Link>
+          {t("dont_have_account")}? <Link to="/register">{t("create_account")}</Link>
         </p>
       </div>
     </div>

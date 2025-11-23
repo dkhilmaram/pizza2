@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { getMe, updateMe } from "../services/auth";
+import { useTranslation } from "react-i18next";
 
 export default function Profile() {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -12,12 +14,11 @@ export default function Profile() {
     dob: "",
     gender: "",
   });
-  const [image, setImage] = useState(null); // File object
-  const [preview, setPreview] = useState(""); // Base64 or URL
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState("");
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
 
-  // Auto-hide messages
   useEffect(() => {
     if (msg || error) {
       const timer = setTimeout(() => {
@@ -28,7 +29,6 @@ export default function Profile() {
     }
   }, [msg, error]);
 
-  // Load user profile
   useEffect(() => {
     const loadProfile = async () => {
       try {
@@ -46,13 +46,12 @@ export default function Profile() {
         setPreview(data.image || "");
       } catch (err) {
         console.error(err);
-        setError("Erreur lors du chargement du profil");
+        setError(t("error_loading_profile"));
       }
     };
     loadProfile();
-  }, []);
+  }, [t]);
 
-  // Handle form submission
   const handleUpdate = async (e) => {
     e.preventDefault();
     setMsg("");
@@ -77,25 +76,23 @@ export default function Profile() {
 
       const { data } = await updateMe(payload);
 
-      setMsg("Profil mis à jour !");
+      setMsg(t("profile_updated"));
       setPreview(data.image || preview);
       setForm({ ...form, ...data });
-      localStorage.setItem("user", JSON.stringify(data)); // persist session data
+      localStorage.setItem("user", JSON.stringify(data));
       setImage(null);
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || "Erreur lors de la mise à jour");
+      setError(err.response?.data?.message || t("error_updating_profile"));
     }
   };
 
-  // Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     window.location.href = "/login";
   };
 
-  // Handle image change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
@@ -104,7 +101,7 @@ export default function Profile() {
 
   return (
     <div className="container-page" style={{ paddingTop: 40 }}>
-      <h2 style={{ color: "#b91c1c", marginBottom: 20 }}>Mon Profil</h2>
+      <h2 style={{ color: "#b91c1c", marginBottom: 20 }}>{t("my_profile")}</h2>
 
       {msg && (
         <div style={{ background: "#d1fae5", color: "#065f46", padding: "10px 12px", borderRadius: 12, marginBottom: 12 }}>
@@ -144,49 +141,43 @@ export default function Profile() {
         </div>
 
         <form onSubmit={handleUpdate} style={{ display: "grid", gap: 14 }}>
-          <label style={{ color: "#b91c1c", fontWeight: 600 }}>Nom</label>
-          <input className="input" placeholder="Nom" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("name")}</label>
+          <input className="input" placeholder={t("name")} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
 
-          <label style={{ color: "#b91c1c", fontWeight: 600 }}>Email</label>
-          <input className="input" placeholder="Email" value={form.email} disabled />
+          <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("email")}</label>
+          <input className="input" placeholder={t("email")} value={form.email} disabled />
 
-          <label style={{ color: "#b91c1c", fontWeight: 600 }}>Bio / Caption</label>
-          <textarea
-            className="input"
-            placeholder="Bio / Caption"
-            value={form.bio}
-            onChange={(e) => setForm({ ...form, bio: e.target.value })}
-            style={{ minHeight: 80 }}
-          />
+          <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("bio")}</label>
+          <textarea className="input" placeholder={t("bio")} value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} style={{ minHeight: 80 }} />
 
-          <label style={{ color: "#b91c1c", fontWeight: 600 }}>Téléphone</label>
-          <input className="input" placeholder="Phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+          <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("phone")}</label>
+          <input className="input" placeholder={t("phone")} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
 
-          <label style={{ color: "#b91c1c", fontWeight: 600 }}>Adresse</label>
-          <input className="input" placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+          <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("address")}</label>
+          <input className="input" placeholder={t("address")} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
 
-          <label style={{ color: "#b91c1c", fontWeight: 600 }}>Ville</label>
-          <input className="input" placeholder="City" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+          <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("city")}</label>
+          <input className="input" placeholder={t("city")} value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
 
-          <label style={{ color: "#b91c1c", fontWeight: 600 }}>Date de naissance</label>
+          <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("dob")}</label>
           <input type="date" className="input" value={form.dob} onChange={(e) => setForm({ ...form, dob: e.target.value })} />
 
-          <label style={{ color: "#b91c1c", fontWeight: 600 }}>Genre</label>
+          <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("gender")}</label>
           <select className="input" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
-            <option value="">Sélectionner</option>
-            <option value="male">Homme</option>
-            <option value="female">Femme</option>
+            <option value="">{t("select")}</option>
+            <option value="male">{t("male")}</option>
+            <option value="female">{t("female")}</option>
           </select>
 
-          <label style={{ color: "#b91c1c", fontWeight: 600 }}>Photo de profil</label>
+          <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("profile_photo")}</label>
           <input type="file" accept="image/*" onChange={handleImageChange} />
 
           <button type="submit" style={{ background: "#b91c1c", color: "#fff", padding: "10px 16px", border: "none", borderRadius: 8, cursor: "pointer", marginTop: 10 }}>
-            Mettre à jour
+            {t("update_profile")}
           </button>
 
           <button type="button" onClick={handleLogout} style={{ background: "#000", color: "#fff", padding: "10px 16px", border: "none", borderRadius: 8, cursor: "pointer" }}>
-            Déconnexion
+            {t("logout")}
           </button>
         </form>
       </div>

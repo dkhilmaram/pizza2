@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState } from "react"; 
 import { register } from "../services/auth";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function Register() {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -22,23 +24,29 @@ export default function Register() {
     setErr(""); 
     setMsg("");
 
-    // Simple validation
+    // Validation
     if (!form.name || !form.email || !form.password || !form.phone) {
-      setErr("Veuillez remplir tous les champs obligatoires.");
+      setErr(t("fill_required_fields"));
       return;
     }
+    
+    if (form.password.length < 8) {
+      setErr(t("password_min_8"));
+      return;
+    }
+
     if (form.password !== form.confirmPassword) {
-      setErr("Les mots de passe ne correspondent pas.");
+      setErr(t("passwords_not_match"));
       return;
     }
 
     setLoading(true);
     try {
       await register(form);
-      setMsg("Compte créé avec succès 🎉");
+      setMsg(t("account_created_success"));
       setTimeout(() => navigate("/login"), 1000);
     } catch (e) {
-      setErr(e?.response?.data?.message || "Échec de l’inscription ❌");
+      setErr(e?.response?.data?.message || t("register_failed"));
     } finally {
       setLoading(false);
     }
@@ -47,34 +55,30 @@ export default function Register() {
   return (
     <div className="container-page" style={{ paddingTop: 40 }}>
       <div className="card" style={{ maxWidth: 480, margin: "0 auto" }}>
-        <h2 style={{ margin: "0 0 6px 0", fontWeight: 800 }}>Inscription</h2>
+        <h2 style={{ margin: "0 0 6px 0", fontWeight: 800 }}>{t("register")}</h2>
         <p className="helper" style={{ marginBottom: 16 }}>
-          Créez votre compte pour accéder à nos services
+          {t("create_account_desc")}
         </p>
 
         {msg && (
-          <div
-            style={{
-              background: "#eaffea",
-              color: "#166534",
-              padding: "10px 12px",
-              borderRadius: 12,
-              marginBottom: 10
-            }}
-          >
+          <div style={{
+            background: "#eaffea",
+            color: "#166534",
+            padding: "10px 12px",
+            borderRadius: 12,
+            marginBottom: 10
+          }}>
             {msg}
           </div>
         )}
         {err && (
-          <div
-            style={{
-              background: "#ffe5e9",
-              color: "#9f1239",
-              padding: "10px 12px",
-              borderRadius: 12,
-              marginBottom: 10
-            }}
-          >
+          <div style={{
+            background: "#ffe5e9",
+            color: "#9f1239",
+            padding: "10px 12px",
+            borderRadius: 12,
+            marginBottom: 10
+          }}>
             {err}
           </div>
         )}
@@ -82,60 +86,58 @@ export default function Register() {
         <form className="form" onSubmit={onSubmit}>
           <input
             className="input"
-            placeholder="Nom complet"
+            placeholder={t("full_name")}
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
           <input
             className="input"
             type="email"
-            placeholder="Adresse e-mail"
+            placeholder={t("email_address")}
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
           <input
             className="input"
             type="tel"
-            placeholder="Numéro de téléphone"
+            placeholder={t("phone_number")}
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
           />
           <input
             className="input"
-            placeholder="Adresse complète"
+            placeholder={t("full_address")}
             value={form.address}
             onChange={(e) => setForm({ ...form, address: e.target.value })}
           />
           <input
             className="input"
-            placeholder="Ville"
+            placeholder={t("city")}
             value={form.city}
             onChange={(e) => setForm({ ...form, city: e.target.value })}
           />
           <input
             className="input"
             type="password"
-            placeholder="Mot de passe"
+            placeholder={t("password")}
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
           <input
             className="input"
             type="password"
-            placeholder="Confirmer le mot de passe"
+            placeholder={t("confirm_password")}
             value={form.confirmPassword}
-            onChange={(e) =>
-              setForm({ ...form, confirmPassword: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
           />
 
           <button className="btn btn-primary" type="submit" disabled={loading}>
-            {loading ? "Création..." : "Créer le compte"}
+            {loading ? t("creating") : t("create_account")}
           </button>
         </form>
 
         <p className="helper" style={{ marginTop: 12 }}>
-          Vous avez déjà un compte ? <Link to="/login">Se connecter</Link>
+          {t("already_have_account")}? <Link to="/login">{t("login")}</Link>
         </p>
       </div>
     </div>

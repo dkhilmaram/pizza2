@@ -1,9 +1,12 @@
-// src/components/Navbar.jsx
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import DarkModeToggle from "./DarkModeToggle";
+import LanguageSwitcher from "./langageswitcher";
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n/i18n";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const user = JSON.parse(localStorage.getItem("user") || "null");
 
   const logout = () => {
@@ -13,7 +16,7 @@ export default function Navbar() {
   };
 
   const linkStyle = {
-    color: "#dc2626", // red for light mode
+    color: "#dc2626",
     textDecoration: "none",
     fontWeight: 600,
   };
@@ -31,31 +34,32 @@ export default function Navbar() {
 
         {/* Navigation Links */}
         <nav className="nav">
-          {user?.role !== "admin" && <NavLink to="/" style={linkStyle}>Accueil</NavLink>}
-          {!user && <NavLink to="/login" style={linkStyle}>Connexion</NavLink>}
-          {!user && <NavLink to="/register" style={linkStyle}>Inscription</NavLink>}
-          {user && <NavLink to="/profile" style={linkStyle}>Profil</NavLink>}
-          {user?.role === "admin" && <NavLink to="/dashboard" style={linkStyle}>Dashboard</NavLink>}
+          {user?.role !== "admin" && <NavLink to="/" style={linkStyle}>{t("home")}</NavLink>}
+          {!user && <NavLink to="/login" style={linkStyle}>{t("login")}</NavLink>}
+          {!user && <NavLink to="/register" style={linkStyle}>{t("register")}</NavLink>}
+          {user && <NavLink to="/profile" style={linkStyle}>{t("profile")}</NavLink>}
+          {user?.role === "admin" && <NavLink to="/dashboard" style={linkStyle}>{t("dashboard")}</NavLink>}
         </nav>
 
         {/* Actions */}
         <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
           <DarkModeToggle />
+          <LanguageSwitcher />
           {user ? (
-            <button 
-              className="btn btn-muted" 
-              onClick={logout} 
+            <button
+              className="btn btn-muted"
+              onClick={logout}
               style={{ color: "#dc2626", borderColor: "#dc2626", background: "#f9fafb" }}
             >
-              Déconnexion
+              {t("logout")}
             </button>
           ) : (
-            <Link 
-              to="/login" 
-              className="btn btn-primary" 
+            <Link
+              to="/login"
+              className="btn btn-primary"
               style={{ background: "#dc2626", color: "#fff" }}
             >
-              Commander
+              {t("order")}
             </Link>
           )}
         </div>

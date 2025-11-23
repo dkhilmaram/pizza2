@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 export default function ForgotPassword() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -24,10 +26,10 @@ export default function ForgotPassword() {
     try {
       const res = await axios.post("http://localhost:5000/api/auth/forgot-password", { email });
       setStep(2);
-      setMsg(res.data.message || "Reset code sent! Check your email.");
+      setMsg(res.data.message || t("reset_code_sent"));
       setIsError(false); // success message
     } catch (err) {
-      setMsg(err.response?.data?.message || "Error sending code");
+      setMsg(err.response?.data?.message || t("error_sending_code"));
       setIsError(true); // error message
     }
   };
@@ -40,7 +42,7 @@ export default function ForgotPassword() {
         code,
         newPassword,
       });
-      setMsg(res.data.message || "Password reset successful!");
+      setMsg(res.data.message || t("password_reset_success"));
       setIsError(false); // success message
       // Redirect to login after 2 seconds
       setTimeout(() => navigate("/login"), 2000);
@@ -51,7 +53,7 @@ export default function ForgotPassword() {
       setCode("");
       setNewPassword("");
     } catch (err) {
-      setMsg(err.response?.data?.message || "Error resetting password");
+      setMsg(err.response?.data?.message || t("error_resetting_password"));
       setIsError(true); // error message
     }
   };
@@ -59,7 +61,7 @@ export default function ForgotPassword() {
   return (
     <div className="container-page" style={{ paddingTop: 40 }}>
       <div className="card" style={{ maxWidth: 420, margin: "0 auto" }}>
-        <h2>Password Reset</h2>
+        <h2>{t("password_reset")}</h2>
 
         {msg && (
           <div
@@ -81,12 +83,12 @@ export default function ForgotPassword() {
             <input
               className="input"
               type="email"
-              placeholder="Enter your email"
+              placeholder={t("enter_email")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <button className="btn btn-primary" onClick={sendCode}>
-              Send Reset Code
+              {t("send_reset_code")}
             </button>
           </>
         )}
@@ -96,25 +98,25 @@ export default function ForgotPassword() {
             <input
               className="input"
               type="text"
-              placeholder="Enter code"
+              placeholder={t("enter_code")}
               value={code}
               onChange={(e) => setCode(e.target.value)}
             />
             <input
               className="input"
               type="password"
-              placeholder="New Password"
+              placeholder={t("new_password")}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
             <button className="btn btn-primary" onClick={resetPass}>
-              Reset Password
+              {t("reset_password")}
             </button>
           </>
         )}
 
         <p style={{ marginTop: 12 }}>
-          <Link to="/login">Back to Login</Link>
+          <Link to="/login">{t("back_to_login")}</Link>
         </p>
       </div>
     </div>
