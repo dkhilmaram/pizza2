@@ -9,6 +9,8 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const reviewRoutes = require("./routes/reviewRoute");
+const boxMessageRoutes = require("./routes/boxMessageRoutes"); // <-- New
 
 const app = express();
 
@@ -36,6 +38,12 @@ app.use("/api/admin", adminRoutes);
 
 // Orders routes
 app.use("/api/orders", orderRoutes);
+
+// Reviews routes
+app.use("/api/reviews", reviewRoutes);
+
+// BoxMessage routes (contact messages)
+app.use("/api/boxmessages", boxMessageRoutes);
 
 // Default route
 app.get("/", (req, res) => {

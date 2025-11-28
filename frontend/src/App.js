@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -7,66 +9,127 @@ import AdminDashboard from "./components/AdminDashboard";
 import ForgetPassword from "./components/ForgetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Welcome from "./components/Welcome";
+import About from "./components/about";
+import Contact from "./components/contact";
+import Reviews from "./components/Reviews";
+import Promotions from "./components/Promotions";
+import Menu from "./components/menu";
+import BoxMessages from "./components/BoxMessage";
+import CustomPizza from "./components/customizePizza";
+import SeeOrders from "./components/SeeOrders"; // Admin + Orders dashboard
+import PizzaPetes from "./components/PizzaPetes"; // Admin-only management page
 
 export default function App() {
+  const [darkMode, setDarkMode] = useState(false);
+
   const token = localStorage.getItem("token");
   const user = token ? JSON.parse(localStorage.getItem("user") || "null") : null;
 
   return (
     <BrowserRouter>
-      <Navbar />
+      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
+
       <main className="container-page" style={{ paddingTop: 24, paddingBottom: 24 }}>
         <Routes>
-          {/* Home / Welcome */}
+
+          {/* Home / Landing */}
           <Route
             path="/"
             element={
               !token ? (
-                <Welcome />
+                <Welcome darkMode={darkMode} />
               ) : user.role === "admin" ? (
-                <AdminDashboard />
+                <AdminDashboard darkMode={darkMode} />
               ) : (
-                <Welcome />
+                <Welcome darkMode={darkMode} />
               )
             }
           />
 
-          {/* Auth routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgetPassword />} />  {/* <-- Add this */}
+          {/* Auth */}
+          <Route path="/login" element={<Login darkMode={darkMode} />} />
+          <Route path="/register" element={<Register darkMode={darkMode} />} />
+          <Route path="/forgot-password" element={<ForgetPassword darkMode={darkMode} />} />
 
           {/* Profile */}
           <Route
             path="/profile"
             element={
               <ProtectedRoute>
-                <Profile />
+                <Profile darkMode={darkMode} />
               </ProtectedRoute>
             }
           />
 
-          {/* Admin dashboard */}
+          {/* ADMIN NEW ROUTES */}
           <Route
-            path="/dashboard"
+            path="/userdashboard"
             element={
               <ProtectedRoute role="admin">
-                <AdminDashboard />
+                <AdminDashboard darkMode={darkMode} />
               </ProtectedRoute>
             }
           />
 
-          {/* Pizza orders placeholder */}
+          <Route
+            path="/orderdashboard"
+            element={
+              <ProtectedRoute role="admin">
+                <SeeOrders darkMode={darkMode} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/boxmessages"
+            element={
+              <ProtectedRoute role="admin">
+                <BoxMessages darkMode={darkMode} />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Admin-only PizzaPetes page */}
+          <Route
+            path="/pizzapetes"
+            element={
+              <ProtectedRoute role="admin">
+                <PizzaPetes darkMode={darkMode} />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* USER ORDERS */}
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                {user?.role === "admin" ? (
+                  <SeeOrders darkMode={darkMode} />
+                ) : (
+                  <CustomPizza darkMode={darkMode} />
+                )}
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Optional pizza route */}
           <Route
             path="/pizza"
             element={
               <ProtectedRoute>
-                <div style={{ textAlign: "center", marginTop: 50, fontSize: 22 }}>
-                  🍕 Coming soon: Customize your pizza orders here!
-                </div>
+                <CustomPizza darkMode={darkMode} />
               </ProtectedRoute>
             }
           />
+
+          {/* Public pages */}
+          <Route path="/reviews" element={<Reviews darkMode={darkMode} />} />
+          <Route path="/promotions" element={<Promotions darkMode={darkMode} />} />
+          <Route path="/menu" element={<Menu darkMode={darkMode} />} />
+          <Route path="/about" element={<About darkMode={darkMode} />} />
+          <Route path="/contact" element={<Contact darkMode={darkMode} />} />
+
         </Routes>
       </main>
     </BrowserRouter>

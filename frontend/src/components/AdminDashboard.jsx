@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import ConfirmModal from "./ConfirmModal";
 import { listUsers, addUser, deleteUser, updateUserRole } from "../services/admin";
-import { getOrders } from "../services/orders";
 import { useTranslation } from "react-i18next";
 
-export default function AdminDashboard() {
-  const { t } = useTranslation();
+export default function UserDashboard() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
 
   // Users state
   const [users, setUsers] = useState([]);
@@ -21,13 +21,8 @@ export default function AdminDashboard() {
   const [userMsg, setUserMsg] = useState("");
   const [search, setSearch] = useState("");
 
-  // Orders state
-  const [orders, setOrders] = useState([]);
-  const [orderMsg, setOrderMsg] = useState("");
-
   // Loading states
   const [loadingUsers, setLoadingUsers] = useState(true);
-  const [loadingOrders, setLoadingOrders] = useState(true);
 
   // Confirm modals
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -49,22 +44,8 @@ export default function AdminDashboard() {
     }
   };
 
-  /** ------------------ Load Orders ------------------ **/
-  const loadOrders = async () => {
-    setLoadingOrders(true);
-    try {
-      const data = await getOrders();
-      setOrders(data || []);
-    } catch (err) {
-      setOrderMsg(t("failed_load_orders"));
-    } finally {
-      setLoadingOrders(false);
-    }
-  };
-
   useEffect(() => {
     loadUsers();
-    loadOrders();
   }, []);
 
   /** ------------------ Auto-hide messages ------------------ **/
@@ -74,13 +55,6 @@ export default function AdminDashboard() {
       return () => clearTimeout(timer);
     }
   }, [userMsg]);
-
-  useEffect(() => {
-    if (orderMsg) {
-      const timer = setTimeout(() => setOrderMsg(""), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [orderMsg]);
 
   /** ------------------ Add User ------------------ **/
   const handleAddUser = async () => {
@@ -155,135 +129,105 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="container-page" style={{ paddingTop: 40, display: "grid", gap: 24 }}>
-      <h2 style={{ fontWeight: 800 }}>{t("admin_dashboard")}</h2>
+    <div style={{ direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left" }}>
+      <div className="container-page" style={{ paddingTop: 40, display: "grid", gap: 24 }}>
+        <h2 style={{ fontWeight: 800 }}>{t("user_dashboard")}</h2>
 
-      {/* ------------------ Modals ------------------ */}
-      {showDeleteConfirm && (
-        <ConfirmModal
-          message={t("confirm_delete_user")}
-          onConfirm={confirmDelete}
-          onCancel={cancelDelete}
-        />
-      )}
+        {/* ------------------ Modals ------------------ */}
+        {showDeleteConfirm && (
+          <ConfirmModal
+            message={t("confirm_delete_user")}
+            onConfirm={confirmDelete}
+            onCancel={cancelDelete}
+          />
+        )}
 
-      {showRoleConfirm && (
-        <ConfirmModal
-          message={t("confirm_change_role", { role: targetRole })}
-          onConfirm={confirmRoleChange}
-          onCancel={() => setShowRoleConfirm(false)}
-        />
-      )}
+        {showRoleConfirm && (
+          <ConfirmModal
+            message={t("confirm_change_role", { role: targetRole })}
+            onConfirm={confirmRoleChange}
+            onCancel={() => setShowRoleConfirm(false)}
+          />
+        )}
 
-      {/* ------------------ User Messages ------------------ */}
-      {userMsg && <div className="message">{userMsg}</div>}
+        {/* ------------------ User Messages ------------------ */}
+        {userMsg && <div className="message">{userMsg}</div>}
 
-      {/* ------------------ Add User ------------------ */}
-      <div className="card" style={{ padding: 20 }}>
-        <h3>{t("add_new_user")}</h3>
-        <div style={{ display: "grid", gap: 10, marginBottom: 20 }}>
-          <input className="input" placeholder={t("name")} value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} />
-          <input className="input" placeholder={t("email")} value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
-          <input className="input" type="password" placeholder={t("password")} value={newUser.password} onChange={e => setNewUser({ ...newUser, password: e.target.value })} />
-          <input className="input" placeholder={t("phone")} value={newUser.phone} onChange={e => setNewUser({ ...newUser, phone: e.target.value })} />
-          <input className="input" placeholder={t("address")} value={newUser.address} onChange={e => setNewUser({ ...newUser, address: e.target.value })} />
-          <select className="select" value={newUser.gender} onChange={e => setNewUser({ ...newUser, gender: e.target.value })}>
-            <option value="">{t("select_gender")}</option>
-            <option value="male">{t("male")}</option>
-            <option value="female">{t("female")}</option>
-          </select>
-          <select className="select" value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })}>
-            <option value="user">{t("user")}</option>
-            <option value="admin">{t("admin")}</option>
-          </select>
-          <button className="btn btn-primary" onClick={handleAddUser}>{t("add_user")}</button>
+        {/* ------------------ Add User ------------------ */}
+        <div className="card" style={{ padding: 20 }}>
+          <h3>{t("add_new_user")}</h3>
+          <div style={{ display: "grid", gap: 10, marginBottom: 20 }}>
+            <input className="input" placeholder={t("name")} value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} />
+            <input className="input" placeholder={t("email")} value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
+            <input className="input" type="password" placeholder={t("password")} value={newUser.password} onChange={e => setNewUser({ ...newUser, password: e.target.value })} />
+            <input className="input" placeholder={t("phone")} value={newUser.phone} onChange={e => setNewUser({ ...newUser, phone: e.target.value })} />
+            <input className="input" placeholder={t("address")} value={newUser.address} onChange={e => setNewUser({ ...newUser, address: e.target.value })} />
+            <select className="select" value={newUser.gender} onChange={e => setNewUser({ ...newUser, gender: e.target.value })}>
+              <option value="">{t("select_gender")}</option>
+              <option value="male">{t("male")}</option>
+              <option value="female">{t("female")}</option>
+            </select>
+            <select className="select" value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })}>
+              <option value="user">{t("user")}</option>
+              <option value="admin">{t("admin")}</option>
+            </select>
+            <button className="btn btn-primary" onClick={handleAddUser}>{t("add_user")}</button>
+          </div>
+
+          {/* Search */}
+          <input className="input" placeholder={t("search_users")} value={search} onChange={e => setSearch(e.target.value)} style={{ marginBottom: 12 }} />
+
+          {/* Users Table */}
+          <table className="table" style={{ direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left" }}>
+            <thead>
+              <tr>
+                <th>{t("name")}</th>
+                <th>{t("email")}</th>
+                <th>{t("phone")}</th>
+                <th>{t("address")}</th>
+                <th>{t("gender")}</th>
+                <th>{t("role")}</th>
+                <th>{t("actions")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loadingUsers ? (
+                <tr><td colSpan="7" style={{ textAlign: "center" }}>{t("loading_users")}</td></tr>
+              ) : filteredUsers.length > 0 ? filteredUsers.map(u => (
+                <tr key={u._id}>
+                  <td>{u.name}</td>
+                  <td>{u.email}</td>
+                  <td>{u.phone || "-"}</td>
+                  <td>{u.address || "-"}</td>
+                  <td>{u.gender || "-"}</td>
+                  <td>
+                    <span style={{
+                      padding: "4px 10px",
+                      borderRadius: 8,
+                      color: "#fff",
+                      backgroundColor: u.role === "admin" ? "#b91c1c" : "#16a34a",
+                      fontWeight: 600,
+                      textTransform: "capitalize",
+                      fontSize: 12,
+                    }}>{u.role}</span>
+                  </td>
+                  <td>
+                    {u.email !== "admin@gmail.com" ? (
+                      <>
+                        <button className="btn btn-warning" onClick={() => handleAskRoleChange(u._id, u.role)} style={{ marginRight: 6 }}>{t("edit_role")}</button>
+                        {u.role !== "admin" && <button className="btn btn-primary" onClick={() => handleAskDelete(u._id)}>{t("delete")}</button>}
+                      </>
+                    ) : (
+                      <span style={{ color: "#888" }}>{t("protected_account")}</span>
+                    )}
+                  </td>
+                </tr>
+              )) : (
+                <tr><td colSpan="7" style={{ textAlign: "center" }}>{t("no_users_found")}</td></tr>
+              )}
+            </tbody>
+          </table>
         </div>
-
-        {/* Search */}
-        <input className="input" placeholder={t("search_users")} value={search} onChange={e => setSearch(e.target.value)} style={{ marginBottom: 12 }} />
-
-        {/* Users Table */}
-        <table className="table">
-          <thead>
-            <tr>
-              <th>{t("name")}</th>
-              <th>{t("email")}</th>
-              <th>{t("phone")}</th>
-              <th>{t("address")}</th>
-              <th>{t("gender")}</th>
-              <th>{t("role")}</th>
-              <th>{t("actions")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loadingUsers ? (
-              <tr><td colSpan="7" style={{ textAlign: "center" }}>{t("loading_users")}</td></tr>
-            ) : filteredUsers.length > 0 ? filteredUsers.map(u => (
-              <tr key={u._id}>
-                <td>{u.name}</td>
-                <td>{u.email}</td>
-                <td>{u.phone || "-"}</td>
-                <td>{u.address || "-"}</td>
-                <td>{u.gender || "-"}</td>
-                <td>
-                  <span style={{
-                    padding: "4px 10px",
-                    borderRadius: 8,
-                    color: "#fff",
-                    backgroundColor: u.role === "admin" ? "#b91c1c" : "#16a34a",
-                    fontWeight: 600,
-                    textTransform: "capitalize",
-                    fontSize: 12,
-                  }}>{u.role}</span>
-                </td>
-                <td>
-                  {u.email !== "admin@gmail.com" ? (
-                    <>
-                      <button className="btn btn-warning" onClick={() => handleAskRoleChange(u._id, u.role)} style={{ marginRight: 6 }}>{t("edit_role")}</button>
-                      {u.role !== "admin" && <button className="btn btn-primary" onClick={() => handleAskDelete(u._id)}>{t("delete")}</button>}
-                    </>
-                  ) : (
-                    <span style={{ color: "#888" }}>{t("protected_account")}</span>
-                  )}
-                </td>
-              </tr>
-            )) : (
-              <tr><td colSpan="7" style={{ textAlign: "center" }}>{t("no_users_found")}</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* ------------------ Orders ------------------ */}
-      <div className="card" style={{ padding: 20 }}>
-        <h3>{t("orders")}</h3>
-        {orderMsg && <div className="message">{orderMsg}</div>}
-        <table className="table">
-          <thead>
-            <tr>
-              <th>{t("order_id")}</th>
-              <th>{t("user")}</th>
-              <th>{t("items")}</th>
-              <th>{t("total")}</th>
-              <th>{t("date")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loadingOrders ? (
-              <tr><td colSpan="5" style={{ textAlign: "center" }}>{t("loading_orders")}</td></tr>
-            ) : orders.length > 0 ? orders.map(o => (
-              <tr key={o._id}>
-                <td>{o._id}</td>
-                <td>{o.user?.name || "Unknown"}</td>
-                <td>{o.items?.map(i => i.name).join(", ") || "-"}</td>
-                <td>{o.total || "-"} DT</td>
-                <td>{new Date(o.createdAt).toLocaleString()}</td>
-              </tr>
-            )) : (
-              <tr><td colSpan="5" style={{ textAlign: "center" }}>{t("no_orders_found")}</td></tr>
-            )}
-          </tbody>
-        </table>
       </div>
     </div>
   );

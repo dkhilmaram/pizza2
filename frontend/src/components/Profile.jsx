@@ -3,7 +3,7 @@ import { getMe, updateMe } from "../services/auth";
 import { useTranslation } from "react-i18next";
 
 export default function Profile() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -18,6 +18,8 @@ export default function Profile() {
   const [preview, setPreview] = useState("");
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
+
+  const isRTL = i18n.language === "ar";
 
   useEffect(() => {
     if (msg || error) {
@@ -78,7 +80,14 @@ export default function Profile() {
 
       setMsg(t("profile_updated"));
       setPreview(data.image || preview);
-      setForm({ ...form, ...data });
+
+      // ✅ FIXED: Convert dob again after update so input displays correctly
+      setForm({
+        ...form,
+        ...data,
+        dob: data.dob ? new Date(data.dob).toISOString().split("T")[0] : "",
+      });
+
       localStorage.setItem("user", JSON.stringify(data));
       setImage(null);
     } catch (err) {
@@ -100,16 +109,35 @@ export default function Profile() {
   };
 
   return (
-    <div className="container-page" style={{ paddingTop: 40 }}>
+    <div
+      className="container-page"
+      style={{ paddingTop: 40, direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left" }}
+    >
       <h2 style={{ color: "#b91c1c", marginBottom: 20 }}>{t("my_profile")}</h2>
 
       {msg && (
-        <div style={{ background: "#d1fae5", color: "#065f46", padding: "10px 12px", borderRadius: 12, marginBottom: 12 }}>
+        <div
+          style={{
+            background: "#d1fae5",
+            color: "#065f46",
+            padding: "10px 12px",
+            borderRadius: 12,
+            marginBottom: 12,
+          }}
+        >
           {msg}
         </div>
       )}
       {error && (
-        <div style={{ background: "#fee2e2", color: "#b91c1c", padding: "10px 12px", borderRadius: 12, marginBottom: 12 }}>
+        <div
+          style={{
+            background: "#fee2e2",
+            color: "#b91c1c",
+            padding: "10px 12px",
+            borderRadius: 12,
+            marginBottom: 12,
+          }}
+        >
           {error}
         </div>
       )}
@@ -120,7 +148,13 @@ export default function Profile() {
             <img
               src={preview}
               alt="Profile"
-              style={{ width: 120, height: 120, borderRadius: "50%", objectFit: "cover", border: "2px solid #b91c1c" }}
+              style={{
+                width: 120,
+                height: 120,
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "2px solid #b91c1c",
+              }}
             />
           ) : (
             <div
@@ -135,35 +169,77 @@ export default function Profile() {
                 fontSize: 40,
               }}
             >
-              {form.name.charAt(0).toUpperCase()}
+              {form.name ? form.name.charAt(0).toUpperCase() : ""}
             </div>
           )}
         </div>
 
         <form onSubmit={handleUpdate} style={{ display: "grid", gap: 14 }}>
           <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("name")}</label>
-          <input className="input" placeholder={t("name")} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input
+            className="input"
+            placeholder={t("name")}
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
+          />
 
           <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("email")}</label>
-          <input className="input" placeholder={t("email")} value={form.email} disabled />
+          <input className="input" placeholder={t("email")} value={form.email} disabled style={{ direction: isRTL ? "rtl" : "ltr" }} />
 
           <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("bio")}</label>
-          <textarea className="input" placeholder={t("bio")} value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} style={{ minHeight: 80 }} />
+          <textarea
+            className="input"
+            placeholder={t("bio")}
+            value={form.bio}
+            onChange={(e) => setForm({ ...form, bio: e.target.value })}
+            style={{ minHeight: 80, direction: isRTL ? "rtl" : "ltr" }}
+          />
 
           <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("phone")}</label>
-          <input className="input" placeholder={t("phone")} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+          <input
+            className="input"
+            placeholder={t("phone")}
+            value={form.phone}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
+          />
 
           <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("address")}</label>
-          <input className="input" placeholder={t("address")} value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+          <input
+            className="input"
+            placeholder={t("address")}
+            value={form.address}
+            onChange={(e) => setForm({ ...form, address: e.target.value })}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
+          />
 
           <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("city")}</label>
-          <input className="input" placeholder={t("city")} value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+          <input
+            className="input"
+            placeholder={t("city")}
+            value={form.city}
+            onChange={(e) => setForm({ ...form, city: e.target.value })}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
+          />
 
+          {/* DOB FIXED & restored */}
           <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("dob")}</label>
-          <input type="date" className="input" value={form.dob} onChange={(e) => setForm({ ...form, dob: e.target.value })} />
+          <input
+            type="date"
+            className="input"
+            value={form.dob}
+            onChange={(e) => setForm({ ...form, dob: e.target.value })}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
+          />
 
           <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("gender")}</label>
-          <select className="input" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
+          <select
+            className="input"
+            value={form.gender}
+            onChange={(e) => setForm({ ...form, gender: e.target.value })}
+            style={{ direction: isRTL ? "rtl" : "ltr" }}
+          >
             <option value="">{t("select")}</option>
             <option value="male">{t("male")}</option>
             <option value="female">{t("female")}</option>
@@ -172,11 +248,33 @@ export default function Profile() {
           <label style={{ color: "#b91c1c", fontWeight: 600 }}>{t("profile_photo")}</label>
           <input type="file" accept="image/*" onChange={handleImageChange} />
 
-          <button type="submit" style={{ background: "#b91c1c", color: "#fff", padding: "10px 16px", border: "none", borderRadius: 8, cursor: "pointer", marginTop: 10 }}>
+          <button
+            type="submit"
+            style={{
+              background: "#b91c1c",
+              color: "#fff",
+              padding: "10px 16px",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              marginTop: 10,
+            }}
+          >
             {t("update_profile")}
           </button>
 
-          <button type="button" onClick={handleLogout} style={{ background: "#000", color: "#fff", padding: "10px 16px", border: "none", borderRadius: 8, cursor: "pointer" }}>
+          <button
+            type="button"
+            onClick={handleLogout}
+            style={{
+              background: "#000",
+              color: "#fff",
+              padding: "10px 16px",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+            }}
+          >
             {t("logout")}
           </button>
         </form>

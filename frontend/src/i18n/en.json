@@ -20,7 +20,7 @@
   "menu": "Menu",
   "menu_desc": "Browse our menu and discover your favorite pizzas.",
   "see_more": "See More",
-  "register": "Register",
+ 
   "create_account_desc": "Create your account to access our services",
   "full_name": "Full Name",
   "email_address": "Email Address",
@@ -35,17 +35,16 @@
   "account_created_success": "Account created successfully!",
   "register_failed": "Registration failed.",
   "creating": "Creating...",
-  "create_account": "Create Account",
+ 
   "already_have_account": "Already have an account",
-  "login": "Login",
-  "login": "Login",
+ 
   "access_account": "Access your account",
-  "email_address": "Email Address",
-  "password": "Password",
+ 
+
   "login_failed": "Login failed",
   "forgot_password": "Forgot Password?",
   "dont_have_account": "Don't have an account",
-  "create_account": "Create an account",
+
   "password_reset": "Password Reset",
   "reset_code_sent": "Reset code sent! Check your email.",
   "error_sending_code": "Error sending code",
@@ -64,7 +63,7 @@
   "bio": "Bio / Caption",
   "phone": "Phone",
   "address": "Address",
-  "city": "City",
+
   "dob": "Date of Birth",
   "gender": "Gender",
   "select": "Select",
@@ -72,14 +71,14 @@
   "female": "Female",
   "profile_photo": "Profile Photo",
   "update_profile": "Update Profile",
-  "logout": "Logout",
+ 
   "error_loading_profile": "Error loading profile",
   "error_updating_profile": "Error updating profile",
   "profile_updated": "Profile updated!",
   "admin_dashboard": "Admin Dashboard",
   "failed_load_users": "Failed to load users.",
   "failed_load_orders": "Failed to load orders.",
-  "fill_required_fields": "Please fill all required fields.",
+
   "user_added_success": "User added successfully!",
   "error_adding_user": "Error adding user.",
   "user_deleted_success": "User deleted successfully!",
@@ -89,15 +88,10 @@
   "confirm_delete_user": "Are you sure you want to delete this user?",
   "confirm_change_role": "Are you sure you want to change this user to {{role}}?",
   "add_new_user": "Add New User",
-  "name": "Name",
-  "email": "Email",
-  "password": "Password",
-  "phone": "Phone",
-  "address": "Address",
+
   "select_gender": "Select Gender",
-  "male": "Male",
-  "female": "Female",
-  "user": "User",
+ 
+  
   "admin": "Admin",
   "add_user": "Add User",
   "search_users": "Search users...",
@@ -117,6 +111,126 @@
   "user": "User",
   "start": "Start",
   "see my orders": "See My Orders",
-  "create an account": "Create Account"
+  "create an account": "Create Account",
+   "ratings_title": "⭐ Ratings",
+  "ratings_success_message": "Your rating has been submitted!",
+  "ratings_must_login": "You must be logged in to rate.",
+  "ratings_select_rating": "Select a rating!",
+  "ratings_average": "Average Rating",
+  "ratings_rated_by_one": "1 person rated this",
+  "ratings_rated_by_other": "{{count}} people rated this",
+  "ratings_submit_button": "Submit / Update Rating",
+  "ratings_star": "{{star}}★",
+  "ratings_percentage": "{{percentage}}%",
+  "locale": "en-US",
+ 
+  "promo1": {
+    "name": "10% off your first order",
+    "description": "Special offer for new customers"
+  },
+  "promo2": {
+    "name": "2 for 1 on all pizzas",
+    "description": "Buy one pizza, get the second free!"
+  },
+  "promo3": {
+  "name": "50% off orders of 4+ pizzas",
+  "description": "Perfect for gatherings with friends"
+},
+"promo4": {
+  "name": "Free cookie with every pizza",
+  "description": "A little dessert on the house"
+},
+"promo5": {
+  "name": "Free Margherita pizza",
+  "description": "Get a Margherita free with €30 purchase"
+},
+"promo6": {
+  "name": "Free delivery tonight",
+  "description": "Delivery fees waived after 8 PM"
+},
+ "yes": "Yes",
+  "cancel": "Cancel",
+  "role":"role",
+   "about_us": "About Us",
+  "paragraph_1": "Welcome to Pizza Pete’s, where passion for authentic Italian flavors meets the joy of sharing food with loved ones. Our journey began with a simple goal: to bring the freshest ingredients and carefully crafted recipes to every table. From hand-stretched dough to perfectly melted cheese, every pizza we serve is a testament to our dedication to quality and flavor.",
+  "paragraph_2": "At Pizza Pete’s, we believe that a meal is more than just food – it's an experience. Our cozy ambiance, friendly staff, and commitment to excellent service make each visit memorable. We take pride in sourcing the finest locally-grown vegetables, premium meats, and the freshest herbs to guarantee a delightful taste in every bite.",
+  "paragraph_3": "Whether you are joining us for a family dinner, celebrating a special occasion, or just craving a delicious pizza, Pizza Pete’s is here to make every moment enjoyable. Our menu also features a variety of sides, desserts, and beverages, designed to complement your meal perfectly. Thank you for choosing Pizza Pete’s – where quality, passion, and happiness come together in every slice!",
+ "box_messages": "Box Messages",
+  "no_messages_yet": "No messages yet.",
+ 
+  "subject": "Subject",
+  "message": "Message",
+  "seen": "Seen",
+  "action": "Action",
 
+  "no": "No",
+  "mark_as_seen": "Mark as Seen",
+  "contact_us": "Contact Us",
+
+  "send_message": "Send Message",
+  "sending": "Sending...",
+  "server_error": "Server error",
+  
+    "ratings_description": "Your opinion matters! Share your experience with us. Every star and comment helps improve our service and guides others in making the best choice.",
+    
+    "submit_rate": "Submit Rating",
+    "comments": "Comments",
+    "write_a_comment": "Write a comment...",
+      "write_a_reply": "Write a reply...",
+        "reply": "Reply",
+    "submit": "Submit",
+    "edit": "Edit",
+     "createYourPizza": "Create Your Custom Pizza",
+  "pizzaName": "Pizza Name",
+  "writeYourPizzaName": "Write your pizza name",
+  "size": "Size",
+  "sizeShort": { "small": "Small", "medium": "Medium", "large": "Large" },
+  "crustType": "Crust Type",
+  "crust": "Crust",
+  "crusts": { "classic": "Classic", "thin": "Thin & Crispy", "stuffed": "Cheese Stuffed Edge" },
+  "sauce": "Sauce",
+  "sauces": { "tomato": "Tomato", "bbq": "Barbecue", "white": "Cream" },
+  "additionalToppings": "Additional Toppings (+€1.80 each)",
+  "toppings": {
+    "mozzarella": "Mozzarella",
+    "cheddar": "Cheddar",
+    "peppers": "Peppers",
+    "onions": "Onions",
+    "blackOlives": "Black Olives",
+    "mushrooms": "Mushrooms",
+    "pepperoni": "Pepperoni",
+    "grilledChicken": "Grilled Chicken",
+    "mincedMeat": "Minced Meat",
+    "pineapple": "Pineapple",
+    "corn": "Corn"
+  },
+  "preview": "Pizza Preview",
+  "addToCart": "Add to Cart",
+  "orChooseFromMenu": "Or choose from the classic menu",
+  "backToMenu": "Back to the classic menu",
+  "en": {
+    "menu": "Our Menu",
+    "Margherita": "Margherita",
+    "Pepperoni": "Pepperoni",
+    "Quatre Fromages": "Four Cheese",
+    "Végétarienne": "Vegetarian",
+    "Hawaïenne": "Hawaiian",
+    "Diavola": "Diavola",
+    "Tomate, Mozzarella, Basilic": "Tomato, Mozzarella, Basil",
+    "Pepperoni, Mozzarella, Sauce tomate": "Pepperoni, Mozzarella, Tomato sauce",
+    "Mozzarella, Gorgonzola, Parmesan, Chèvre": "Mozzarella, Gorgonzola, Parmesan, Goat Cheese",
+    "Légumes grillés, Mozzarella, Sauce tomate": "Grilled Vegetables, Mozzarella, Tomato sauce",
+    "Jambon, Ananas, Mozzarella": "Ham, Pineapple, Mozzarella",
+    "Pepperoni piquant, Piments, Mozzarella": "Spicy Pepperoni, Chili, Mozzarella",
+    "add": "Add",
+    "create custom pizza": "Create your own pizza",
+     "userdashboard": "User Dashboard",
+  "orderdashboard": "Order Dashboard",
+ "rate": "Rate"  
+  
+
+
+ 
+
+  }
 }

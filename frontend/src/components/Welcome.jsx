@@ -3,17 +3,38 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 export default function Welcome({ darkMode }) {
-  const { t } = useTranslation();
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
+  // Decode JWT token for user info
+  let user = null;
+  let isAdmin = false;
+  const token = localStorage.getItem("token");
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      user = payload;
+      isAdmin = payload.role === "admin";
+    } catch (err) {
+      console.error("Invalid token:", err);
+    }
+  }
+
+  // 🔥 Prevent admins from seeing this page
+  if (isAdmin) {
+    window.location.href = "/userdashboard";
+    return null;
+  }
 
   const smallCardStyle = {
     padding: "20px",
     borderRadius: "15px",
-    textAlign: "center",
+    textAlign: isRTL ? "right" : "center",
     flex: 1,
     margin: "0 10px",
     cursor: "pointer",
     transition: "all 0.3s",
+    direction: isRTL ? "rtl" : "ltr",
   };
 
   const smallCardButtonStyle = {
@@ -24,8 +45,9 @@ export default function Welcome({ darkMode }) {
     border: "none",
     cursor: "pointer",
     textDecoration: "none",
-    backgroundColor: "#ea2828ff",
-    color: "#f9ededff",
+    backgroundColor: "#ea2828",
+    color: "#f9eded",
+    textAlign: "center",
   };
 
   const smallCards = [
@@ -35,15 +57,27 @@ export default function Welcome({ darkMode }) {
   ];
 
   return (
-    <div className="welcome-page">
+    <div
+      className="welcome-page"
+      style={{
+        direction: isRTL ? "rtl" : "ltr",
+        textAlign: isRTL ? "right" : "left",
+      }}
+    >
       <div className="hero">
         <div className="wrap">
           <div style={{ maxWidth: "500px" }}>
-            
-            {/* ------ FIXED ONLY THIS PART ------ */}
-            <div className="badges" style={{ marginBottom: "10px" }}>
+            <div
+              className="badges"
+              style={{
+                marginBottom: "10px",
+                display: "flex",
+                gap: "10px",
+                justifyContent: isRTL ? "flex-end" : "flex-start",
+              }}
+            >
               <Link
-                to={user ? "/new" : "/login"}
+                to={user ? "/promotions" : "/login"}
                 className="badge red"
                 style={{ textDecoration: "none" }}
               >
@@ -58,26 +92,25 @@ export default function Welcome({ darkMode }) {
                 {t("express_delivery")}
               </Link>
             </div>
-            {/* ----------------------------------- */}
 
             <h1>{t("hero_title")} 🍕</h1>
             <p>{t("hero_subtitle")}</p>
 
-            <div className="cta" style={{ gap: "10px", flexWrap: "wrap" }}>
+            <div
+              className="cta"
+              style={{ gap: "10px", flexWrap: "wrap", display: "flex" }}
+            >
               {!user ? (
                 <>
                   <Link to="/login" className="btn btn-primary">
                     {t("start")}
                   </Link>
+
                   <Link to="/register" className="btn btn-primary">
                     {t("create_account")}
                   </Link>
                 </>
-              ) : (
-                <Link to="/orders" className="btn btn-primary">
-                  {t("see my orders")}
-                </Link>
-              )}
+              ) : null}
             </div>
           </div>
 
@@ -107,6 +140,7 @@ export default function Welcome({ darkMode }) {
           justifyContent: "space-between",
           marginTop: "40px",
           gap: "20px",
+          flexDirection: isRTL ? "row-reverse" : "row",
         }}
       >
         {smallCards.map((card, i) => (
@@ -117,7 +151,11 @@ export default function Welcome({ darkMode }) {
           >
             <h3>{card.title}</h3>
             <p>{card.desc}</p>
-            <Link className="btn" style={smallCardButtonStyle} to={user ? card.path : "/login"}>
+            <Link
+              className="btn"
+              style={smallCardButtonStyle}
+              to={user ? card.path : "/login"}
+            >
               {t("see_more")}
             </Link>
           </div>
