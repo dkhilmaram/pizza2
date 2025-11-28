@@ -17,7 +17,7 @@ import Menu from "./components/menu";
 import BoxMessages from "./components/BoxMessage";
 import CustomPizza from "./components/customizePizza";
 import SeeOrders from "./components/SeeOrders"; // Admin + Orders dashboard
-import PizzaPetes from "./components/PizzaPetes"; // Admin-only management page
+import PizzaPetes from "./components/PizzaPetes"; // Admin-only page
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -61,7 +61,7 @@ export default function App() {
             }
           />
 
-          {/* ADMIN NEW ROUTES */}
+          {/* Admin Routes */}
           <Route
             path="/userdashboard"
             element={
@@ -91,7 +91,7 @@ export default function App() {
 
           {/* Admin-only PizzaPetes page */}
           <Route
-            path="/pizzapetes"
+            path="/rate"
             element={
               <ProtectedRoute role="admin">
                 <PizzaPetes darkMode={darkMode} />
@@ -99,7 +99,7 @@ export default function App() {
             }
           />
 
-          {/* USER ORDERS */}
+          {/* User Orders */}
           <Route
             path="/orders"
             element={
