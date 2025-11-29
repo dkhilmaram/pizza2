@@ -5,7 +5,7 @@ const {
   getMyOrders,
   createOrder,
   updateOrderStatus,
-  deleteOrder,
+  deleteOrder
 } = require("../controllers/orderController");
 const authMiddleware = require("../middleware/authMiddleware");
 

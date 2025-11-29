@@ -1,6 +1,6 @@
-const Order = require("../models/order");
+const Order = require("../models/Order");
 
-// Get all orders (admin)
+// Admin: Get all orders
 exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().populate("user", "name email");
@@ -10,27 +10,31 @@ exports.getAllOrders = async (req, res) => {
   }
 };
 
-// Get current user orders
+// User: Get my orders
 exports.getMyOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.id });
+    const orders = await Order.find({ user: req.user._id });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// Create order
+// Create order (with coupon)
 exports.createOrder = async (req, res) => {
   try {
-    const { items, totalPrice, address, phone } = req.body;
+    const { items, totalPrice, address, phone, coupon, discount } = req.body;
+
     const order = new Order({
-      user: req.user.id,
+      user: req.user._id,
       items,
       totalPrice,
+      coupon: coupon || "",
+      discount: discount || 0,
       address,
-      phone,
+      phone
     });
+
     const savedOrder = await order.save();
     res.status(201).json(savedOrder);
   } catch (err) {
@@ -38,15 +42,11 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// Update order status (admin)
+// Admin: Update order status
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
+    const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
     if (!order) return res.status(404).json({ message: "Order not found" });
     res.json(order);
   } catch (err) {
@@ -54,7 +54,7 @@ exports.updateOrderStatus = async (req, res) => {
   }
 };
 
-// Delete order (admin)
+// Admin: Delete order
 exports.deleteOrder = async (req, res) => {
   try {
     const order = await Order.findByIdAndDelete(req.params.id);

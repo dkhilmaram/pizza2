@@ -8,14 +8,18 @@ export default function AdminReviews() {
   const [comments, setComments] = useState([]);
   const [replyingToId, setReplyingToId] = useState(null);
   const [replyText, setReplyText] = useState("");
-  const isRTL = i18n.language === "ar";
 
-  // Replace this with your real admin check
+  const [average, setAverage] = useState(0);
+  const [totalRaters, setTotalRaters] = useState(0);
+  const [percentages, setPercentages] = useState([0, 0, 0, 0, 0]);
+
   const [isAdmin, setIsAdmin] = useState(false);
+  const isRTL = i18n.language === "ar";
 
   useEffect(() => {
     fetchComments();
-    // check token payload for admin role
+    fetchRatings();
+
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split(".")[1]));
@@ -26,6 +30,25 @@ export default function AdminReviews() {
     }
   }, []);
 
+  // ────────────────────────────────
+  // Fetch ratings overview
+  // ────────────────────────────────
+  const fetchRatings = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/reviews/ratings");
+      const data = await res.json();
+
+      setAverage(data.average || 0);
+      setTotalRaters(data.totalRaters || 0);
+      setPercentages(data.percentages || [0, 0, 0, 0, 0]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ────────────────────────────────
+  // Fetch comments
+  // ────────────────────────────────
   const fetchComments = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/reviews/comments");
@@ -36,8 +59,12 @@ export default function AdminReviews() {
     }
   };
 
+  // ────────────────────────────────
+  // Submit admin reply
+  // ────────────────────────────────
   const submitReply = async () => {
-    if (!replyText.trim()) return alert("Reply cannot be empty");
+    if (!replyText.trim()) return alert(t("reply_empty_msg"));
+
     try {
       const res = await fetch(
         `http://localhost:5000/api/reviews/comments/${replyingToId}/replies`,
@@ -50,12 +77,16 @@ export default function AdminReviews() {
           body: JSON.stringify({ text: replyText }),
         }
       );
+
       const data = await res.json();
+
       if (data.success) {
         setReplyText("");
         setReplyingToId(null);
         fetchComments();
-      } else alert(data.message || "Error submitting reply");
+      } else {
+        alert(data.message || t("error_reply"));
+      }
     } catch (err) {
       console.error(err);
     }
@@ -74,7 +105,74 @@ export default function AdminReviews() {
         textAlign: isRTL ? "right" : "left",
       }}
     >
-      <h2 style={{ textAlign: "center" }}>{t("comments") || "Comments"}</h2>
+      {/* ──────────────────────────────── */}
+      {/* Ratings Overview */}
+      {/* ──────────────────────────────── */}
+
+      <h2 style={{ textAlign: "center", color: "var(--primary)" }}>
+        {t("ratings_title")}
+      </h2>
+
+      <div style={{ marginTop: 20 }}>
+        <strong>
+          {t("ratings_average")}: {average} / 5 —{" "}
+          {totalRaters === 1
+            ? t("ratings_rated_by_one")
+            : t("ratings_rated_by_other", { count: totalRaters })}
+        </strong>
+      </div>
+
+      {/* Histogram */}
+      <div style={{ marginTop: 20 }}>
+        {percentages
+          .slice()
+          .reverse()
+          .map((p, i) => {
+            const star = 5 - i;
+            return (
+              <div
+                key={star}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: 8,
+                  gap: 8,
+                }}
+              >
+                <span style={{ width: 25 }}>{star}★</span>
+
+                <div
+                  style={{
+                    flex: 1,
+                    height: 16,
+                    backgroundColor: "var(--bg-secondary)",
+                    borderRadius: 8,
+                    overflow: "hidden",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${p}%`,
+                      height: "100%",
+                      backgroundColor: "gold",
+                      transition: "width 0.3s ease",
+                    }}
+                  />
+                </div>
+
+                <span style={{ width: 35, textAlign: "right" }}>{p}%</span>
+              </div>
+            );
+          })}
+      </div>
+
+      {/* ──────────────────────────────── */}
+      {/* Comments Section */}
+      {/* ──────────────────────────────── */}
+
+      <h2 style={{ textAlign: "center", marginTop: 40 }}>
+        {t("comments")}
+      </h2>
 
       <div style={{ marginTop: 20 }}>
         {comments.map((c) => (
@@ -93,16 +191,19 @@ export default function AdminReviews() {
               <strong>{c.name}</strong> ({c.emailMasked})
               <p style={{ marginTop: 4, marginBottom: 4 }}>{c.text}</p>
 
-              {/* Admin reply section */}
+              {/* Reply button + form */}
               {isAdmin && (
                 <div style={{ marginTop: 6 }}>
                   <span
-                    style={{ cursor: "pointer", color: "var(--primary)" }}
+                    style={{
+                      cursor: "pointer",
+                      color: "var(--primary)",
+                    }}
                     onClick={() =>
                       setReplyingToId(replyingToId === c._id ? null : c._id)
                     }
                   >
-                    💬 {t("reply") || "Reply"}
+                    💬 {t("reply")}
                   </span>
 
                   {replyingToId === c._id && (
@@ -110,7 +211,7 @@ export default function AdminReviews() {
                       <textarea
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
-                        placeholder={t("write_a_reply") || "Write a reply..."}
+                        placeholder={t("write_a_reply")}
                         style={{
                           width: "100%",
                           minHeight: 50,
@@ -131,14 +232,14 @@ export default function AdminReviews() {
                           color: "var(--text)",
                         }}
                       >
-                        {t("submit_reply") || "Submit Reply"}
+                        {t("submit_reply")}
                       </button>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Display replies */}
+              {/* Display Replies */}
               {c.replies && c.replies.length > 0 && (
                 <div
                   style={{

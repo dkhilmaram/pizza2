@@ -208,7 +208,7 @@
   "addToCart": "Add to Cart",
   "orChooseFromMenu": "Or choose from the classic menu",
   "backToMenu": "Back to the classic menu",
-  "en": {
+ 
     "menu": "Our Menu",
     "Margherita": "Margherita",
     "Pepperoni": "Pepperoni",
@@ -226,11 +226,16 @@
     "create custom pizza": "Create your own pizza",
      "userdashboard": "User Dashboard",
   "orderdashboard": "Order Dashboard",
- "rate": "Rate"  
+ "rate": "Rate"  ,
+ "validUntil": "Valid until {{date}}",
+ "promotionsTitle": "🔥 Promotions & Special Offers",
+
+"takeOffer": "Take Offer",
+"yourPromoCode": "Your Promo Code",
+"copyCode": "Copy Code",
+"codeCopied": "Copied!"
+}
   
 
 
  
-
-  }
-}

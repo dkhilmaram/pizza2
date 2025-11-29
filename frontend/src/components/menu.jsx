@@ -1,12 +1,12 @@
 // src/pages/MenuPage.jsx
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const MenuPage = () => {
   const { t, i18n } = useTranslation();
-  const isRTL = i18n.language === "ar"; // Right-to-left support for Arabic
-
+  const navigate = useNavigate();
+  const isRTL = i18n.language === "ar"; // Right-to-left support
 
   const pizzas = [
     { name: "Margherita", price: "12.00", ingredients: "Tomate, Mozzarella, Basilic", img: "https://tse4.mm.bing.net/th/id/OIP.86Y1g1N1ds1WeREt8NLxEAHaFp?pid=Api&P=0&h=180" },
@@ -16,6 +16,20 @@ const MenuPage = () => {
     { name: "Hawaïenne", price: "14.00", ingredients: "Jambon, Ananas, Mozzarella", img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800" },
     { name: "Diavola", price: "15.50", ingredients: "Pepperoni piquant, Piments, Mozzarella", img: "https://images.unsplash.com/photo-1571066811602-716837d681de?w=800" },
   ];
+
+  const addToCart = (pizza) => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push({
+      id: Date.now(),
+      name: pizza.name,
+      price: parseFloat(pizza.price),
+      details: pizza.ingredients,
+      quantity: 1,
+    });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    navigate("/cart");
+  };
+
   return (
     <div
       className="container-page"
@@ -80,6 +94,7 @@ const MenuPage = () => {
                     cursor: "pointer",
                     transition: "all 0.3s",
                   }}
+                  onClick={() => addToCart(pizza)}
                 >
                   {t("add")}
                 </button>

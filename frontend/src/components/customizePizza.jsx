@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function CustomPizza() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate(); // added
 
   const [size, setSize] = useState("medium");
   const [crust, setCrust] = useState("classic");
@@ -50,6 +51,20 @@ export default function CustomPizza() {
 
   const isRTL = i18n.language === "ar";
 
+  // Add-to-cart function
+  const addCustomPizzaToCart = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push({
+      id: Date.now(),
+      name: pizzaName || "Custom Pizza",
+      price: totalPrice,
+      details: `${sizes[size]}, ${crust}, ${sauce}, ${toppings.join(", ")}`,
+      quantity: 1,
+    });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    navigate("/cart"); // redirect to cart
+  };
+
   return (
     <div
       className="container"
@@ -81,7 +96,7 @@ export default function CustomPizza() {
           alignItems: "start",
         }}
       >
-        {/* LEFT SIDE */}
+        {/* LEFT SIDE (controls) */}
         <div>
           {/* Pizza Name */}
           <div style={{ marginBottom: "2rem" }}>
@@ -243,7 +258,6 @@ export default function CustomPizza() {
             )}
 
             <p style={{ fontSize: "1.4rem", margin: "0.5rem 0" }}>{sizes[size]}</p>
-
             <p style={{ color: mutedColor }}>
               {t("crust")}:{" "}
               {crust === "thin"
@@ -252,7 +266,6 @@ export default function CustomPizza() {
                 ? t("crusts.stuffed")
                 : t("crusts.classic")}
             </p>
-
             <p style={{ color: mutedColor }}>
               {t("sauce")}:{" "}
               {sauce === "tomato"
@@ -273,6 +286,7 @@ export default function CustomPizza() {
             {totalPrice.toFixed(2)} €
           </div>
 
+          {/* Updated Add to Cart Button */}
           <button
             style={{
               width: "100%",
@@ -287,6 +301,7 @@ export default function CustomPizza() {
               boxShadow: "0 8px 20px rgba(220,38,38,0.3)",
               transition: "all 0.3s",
             }}
+            onClick={addCustomPizzaToCart}
           >
             {t("addToCart")}
           </button>
@@ -297,34 +312,6 @@ export default function CustomPizza() {
             </Link>
           </div>
         </div>
-      </div>
-
-      <div style={{ textAlign: "center", marginTop: "5rem" }}>
-        <Link
-          to="/menu"
-          style={{
-            background: "transparent",
-            color: "var(--primary)",
-            fontSize: "1.5rem",
-            fontWeight: "bold",
-            padding: "18px 50px",
-            border: "3px solid var(--primary)",
-            borderRadius: "50px",
-            textDecoration: "none",
-            display: "inline-block",
-            transition: "all 0.4s",
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.background = "var(--primary)";
-            e.target.style.color = "var(--text-inverse)";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = "transparent";
-            e.target.style.color = "var(--primary)";
-          }}
-        >
-          ← {t("backToMenu")}
-        </Link>
       </div>
     </div>
   );

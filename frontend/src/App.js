@@ -16,8 +16,9 @@ import Promotions from "./components/Promotions";
 import Menu from "./components/menu";
 import BoxMessages from "./components/BoxMessage";
 import CustomPizza from "./components/customizePizza";
-import SeeOrders from "./components/SeeOrders"; // Admin + Orders dashboard
-import PizzaPetes from "./components/PizzaPetes"; // Admin-only page
+import SeeOrders from "./components/SeeOrders";
+import PizzaPetes from "./components/PizzaPetes";
+import CartPage from "./components/cart"; // New CartPage import
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -119,6 +120,16 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <CustomPizza darkMode={darkMode} />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Cart Page */}
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <CartPage darkMode={darkMode} />
               </ProtectedRoute>
             }
           />

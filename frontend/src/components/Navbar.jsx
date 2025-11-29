@@ -46,6 +46,12 @@ export default function Navbar() {
     height: 20,
   };
 
+  const cartIconStyle = {
+    width: 28,
+    height: 28,
+    cursor: "pointer",
+  };
+
   return (
     <header
       className="header"
@@ -63,7 +69,7 @@ export default function Navbar() {
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: "22px" }}>🍕</span>
           <Link to="/" className="brand-link" style={linkStyle}>
-            {t("brand_name")} {/* Pizza Pete’s translatable */}
+            {t("Pizza Pete’s")}
           </Link>
 
           {user && (
@@ -82,12 +88,10 @@ export default function Navbar() {
           className="nav"
           style={{ display: "flex", gap: "12px", alignItems: "center" }}
         >
-          {/* Guests + normal users see Home */}
           {(!user || user.role !== "admin") && (
             <NavLink to="/" style={linkStyle}>{t("home")}</NavLink>
           )}
 
-          {/* Guest ONLY */}
           {!user && (
             <>
               <NavLink to="/login" style={linkStyle}>{t("login")}</NavLink>
@@ -95,7 +99,6 @@ export default function Navbar() {
             </>
           )}
 
-          {/* Logged-in user (not admin) */}
           {user && user.role !== "admin" && (
             <>
               <NavLink to="/orders" style={linkStyle}>{t("orders")}</NavLink>
@@ -104,7 +107,6 @@ export default function Navbar() {
             </>
           )}
 
-          {/* Admin ONLY */}
           {user && user.role === "admin" && (
             <>
               <NavLink to="/userdashboard" style={linkStyle}>{t("userdashboard")}</NavLink>
@@ -118,6 +120,17 @@ export default function Navbar() {
         {/* Right-side actions */}
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           <DarkModeToggle />
+
+          {/* Cart icon for logged-in users only */}
+          {user && user.role !== "admin" && (
+            <Link to="/cart">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/263/263142.png"
+                alt={t("cart")}
+                style={cartIconStyle}
+              />
+            </Link>
+          )}
 
           {!user && (
             <Link
