@@ -7,29 +7,26 @@ const {
   updateOrderStatus,
   deleteOrder
 } = require("../controllers/orderController");
-const authMiddleware = require("../middleware/authMiddleware");
 
-// All routes require authentication
-router.use(authMiddleware);
+const auth = require("../middleware/authMiddleware");
+
+// Require admin
+const requireAdmin = (req, res, next) => {
+  if (req.user.role !== "admin")
+    return res.status(403).json({ message: "Admins only" });
+  next();
+};
+
+// All routes need auth
+router.use(auth);
 
 // User routes
 router.get("/me", getMyOrders);
 router.post("/", createOrder);
 
 // Admin routes
-router.get("/", (req, res, next) => {
-  if (req.user.role !== "admin") return res.status(403).json({ message: "Forbidden" });
-  next();
-}, getAllOrders);
-
-router.put("/:id", (req, res, next) => {
-  if (req.user.role !== "admin") return res.status(403).json({ message: "Forbidden" });
-  next();
-}, updateOrderStatus);
-
-router.delete("/:id", (req, res, next) => {
-  if (req.user.role !== "admin") return res.status(403).json({ message: "Forbidden" });
-  next();
-}, deleteOrder);
+router.get("/", requireAdmin, getAllOrders);
+router.put("/:id", requireAdmin, updateOrderStatus);
+router.delete("/:id", requireAdmin, deleteOrder);
 
 module.exports = router;

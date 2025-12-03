@@ -20,7 +20,7 @@ exports.getMyOrders = async (req, res) => {
   }
 };
 
-// Create order (with coupon)
+// Create order
 exports.createOrder = async (req, res) => {
   try {
     const { items, totalPrice, address, phone, coupon, discount } = req.body;
@@ -46,8 +46,14 @@ exports.createOrder = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+
     if (!order) return res.status(404).json({ message: "Order not found" });
+
     res.json(order);
   } catch (err) {
     res.status(500).json({ message: err.message });
