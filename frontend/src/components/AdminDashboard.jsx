@@ -131,7 +131,7 @@ export default function UserDashboard() {
   return (
     <div style={{ direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left" }}>
       <div className="container-page" style={{ paddingTop: 40, display: "grid", gap: 24 }}>
-        <h2 style={{ fontWeight: 800 }}>{t("user_dashboard")}</h2>
+        <h2 style={{ fontWeight: 800 }}>{t("user dashboard")}</h2>
 
         {/* ------------------ Modals ------------------ */}
         {showDeleteConfirm && (

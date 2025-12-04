@@ -1,21 +1,38 @@
-// src/pages/MenuPage.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 
 const MenuPage = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const isRTL = i18n.language === "ar"; // Right-to-left support
+  const isRTL = i18n.language === "ar";
 
-  const pizzas = [
-    { name: "Margherita", price: "12.00", ingredients: "Tomate, Mozzarella, Basilic", img: "https://tse4.mm.bing.net/th/id/OIP.86Y1g1N1ds1WeREt8NLxEAHaFp?pid=Api&P=0&h=180" },
-    { name: "Pepperoni", price: "14.50", ingredients: "Pepperoni, Mozzarella, Sauce tomate", img: "https://www.simplyrecipes.com/thmb/rLl58QZmVP4C3zSlpkKBo72EUws=/2000x1333/filters:fill(auto,1)/__opt__aboutcom__coeus__resources__content_migration__simply_recipes__uploads__2019__09__easy-pepperoni-pizza-lead-3-8f256746d649404baa36a44d271329bc.jpg" },
-    { name: "Quatre Fromages", price: "15.90", ingredients: "Mozzarella, Gorgonzola, Parmesan, Chèvre", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=800" },
-    { name: "Végétarienne", price: "13.90", ingredients: "Légumes grillés, Mozzarella, Sauce tomate", img: "https://maxi.cdnartwhere.eu/wp-content/uploads/recipe/2016-01/pizza-vegetarienne-1280x720-963x542-c-default.jpg?ck=37a6259cc0c1dae299a7866489dff0bd" },
-    { name: "Hawaïenne", price: "14.00", ingredients: "Jambon, Ananas, Mozzarella", img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=800" },
-    { name: "Diavola", price: "15.50", ingredients: "Pepperoni piquant, Piments, Mozzarella", img: "https://images.unsplash.com/photo-1571066811602-716837d681de?w=800" },
-  ];
+  const [pizzas, setPizzas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const API_URL = "http://localhost:5000/api/pizzas"; // your backend endpoint
+
+  // Fetch pizzas from backend
+  useEffect(() => {
+    const fetchPizzas = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setPizzas(data);
+        setError("");
+      } catch (err) {
+        console.error(err);
+        setError("Failed to fetch pizzas. Check backend URL or server.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPizzas();
+  }, []);
 
   const addToCart = (pizza) => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -29,6 +46,9 @@ const MenuPage = () => {
     localStorage.setItem("cart", JSON.stringify(cart));
     navigate("/cart");
   };
+
+  if (loading) return <p style={{ textAlign: "center" }}>Loading pizzas...</p>;
+  if (error) return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
 
   return (
     <div
@@ -52,9 +72,9 @@ const MenuPage = () => {
           margin: "0 auto",
         }}
       >
-        {pizzas.map((pizza, i) => (
+        {pizzas.map((pizza) => (
           <div
-            key={i}
+            key={pizza._id}
             className="card"
             style={{
               borderRadius: "20px",
@@ -81,7 +101,7 @@ const MenuPage = () => {
               </p>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: "1.8rem", fontWeight: "bold", color: "#dc2626" }}>
-                  {pizza.price} €
+                  {parseFloat(pizza.price).toFixed(2)} €
                 </span>
                 <button
                   style={{

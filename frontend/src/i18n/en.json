@@ -225,6 +225,7 @@
     "add": "Add",
     "create custom pizza": "Create your own pizza",
      "userdashboard": "User Dashboard",
+     "user dashboard": "User Dashboard",
   "orderdashboard": "Order Dashboard",
  "rate": "Rate"  ,
  "validUntil": "Valid until {{date}}",
@@ -233,7 +234,24 @@
 "takeOffer": "Take Offer",
 "yourPromoCode": "Your Promo Code",
 "copyCode": "Copy Code",
-"codeCopied": "Copied!"
+"codeCopied": "Copied!",
+"order dashboard": "Order Dashboard",
+
+  "total_price": "Total Price",
+  "status": "Status",
+ 
+
+  "order_deleted_success": "Order deleted successfully",
+  "error_deleting_order": "Error deleting order",
+  "status_updated_success": "Order status updated successfully",
+  "error_updating_status": "Error updating status",
+  "confirm_delete_order": "Are you sure you want to delete this order?",
+  "pending": "Pending",
+  "preparing": "Preparing",
+  "delivering": "Delivering",
+  "completed": "Completed",
+  "canceled": "Canceled"
+
 }
   
 

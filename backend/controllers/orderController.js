@@ -1,4 +1,5 @@
 const Order = require("../models/Order");
+const sendStatusEmail = require("../config/mailerStatus");
 
 // Admin: Get all orders
 exports.getAllOrders = async (req, res) => {
@@ -46,13 +47,24 @@ exports.createOrder = async (req, res) => {
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
 
+    const order = await Order.findById(req.params.id).populate("user", "name email");
     if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.status = status;
+    await order.save();
+
+    // Send email using the modular mailer
+    try {
+      await sendStatusEmail({
+        to: order.user.email,
+        userName: order.user.name,
+        orderId: order._id,
+        status: order.status,
+      });
+    } catch (err) {
+      console.error("Failed to send status email:", err.message);
+    }
 
     res.json(order);
   } catch (err) {

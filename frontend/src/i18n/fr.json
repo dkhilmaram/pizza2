@@ -227,9 +227,26 @@
     "create custom pizza": "Créez votre propre pizza",
      "write_a_reply": "Écrire une réponse...",
       "reply": "Répondre",
+      
        "userdashboard": "Tableau Utilisateur",
+        "user dashboard": "Tableau Utilisateur",
   "orderdashboard": "Tableau des Commandes",
-"rate": "Noter"    
+"rate": "Noter"  ,
+"order dashboard": "Tableau des Commandes",
+ 
+  "total_price": "Prix Total",
+  "status": "Statut",
+ 
+  "order_deleted_success": "Commande supprimée avec succès",
+  "error_deleting_order": "Erreur lors de la suppression de la commande",
+  "status_updated_success": "Statut de la commande mis à jour avec succès",
+  "error_updating_status": "Erreur lors de la mise à jour du statut",
+  "confirm_delete_order": "Êtes-vous sûr de vouloir supprimer cette commande ?",
+  "pending": "En attente",
+  "preparing": "Préparation",
+  "delivering": "En livraison",
+  "completed": "Terminée",
+  "canceled": "Annulée"
 }
 
    

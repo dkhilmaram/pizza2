@@ -1,4 +1,5 @@
 const Review = require("../models/reviews");
+const sendReplyNotification = require("../config/mailerComment");
 
 // ===============================
 // Ratings
@@ -69,7 +70,6 @@ exports.getUserReview = async (req, res) => {
 // Comments
 // ===============================
 
-// Get all comments
 exports.getComments = async (req, res) => {
   try {
     const reviews = await Review.find().lean();
@@ -83,7 +83,10 @@ exports.getComments = async (req, res) => {
             text: c.text,
             userId: c.userId.toString(),
             name: r.name,
-            emailMasked: r.emailMasked,
+
+            // 🔥 👉 Show real email except for admin
+            email: r.email === "admin@gmail.com" ? r.emailMasked : r.email,
+
             replies: c.replies?.map((rep) => ({
               _id: rep._id.toString(),
               text: rep.text,
@@ -102,6 +105,7 @@ exports.getComments = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 // Add a comment (multiple comments per user)
 exports.addComment = async (req, res) => {
@@ -181,10 +185,12 @@ exports.deleteComment = async (req, res) => {
 };
 
 // Reply to a comment (users and admins)
+// Reply to a comment (users and admins)
 exports.replyToComment = async (req, res) => {
   try {
     const { commentId } = req.params;
     const { text } = req.body;
+
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
     if (!text || !text.trim()) return res.status(400).json({ message: "Reply cannot be empty" });
 
@@ -196,22 +202,39 @@ exports.replyToComment = async (req, res) => {
 
     comment.replies = comment.replies || [];
 
+    let reply;
+
     if (req.user.role === "admin") {
-      comment.replies.push({
+      reply = {
         text,
         adminName: req.user.name,
         adminId: req.user._id,
-      });
+      };
     } else {
-      comment.replies.push({
+      reply = {
         text,
         userName: req.user.name,
         userId: req.user._id,
-      });
+      };
     }
 
+    comment.replies.push(reply);
     await review.save();
+
+    // -------------------------------
+    // EMAIL NOTIFICATION (NEW)
+    // -------------------------------
+    const originalUserId = comment.userId?.toString();
+    const replierId = req.user._id.toString();
+
+    // Prevent emailing yourself
+    if (originalUserId !== replierId && review.email) {
+      sendReplyNotification(review.email, review.name, text)
+        .catch(err => console.error("Email notification error:", err));
+    }
+
     res.json({ success: true, message: "Reply added!" });
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

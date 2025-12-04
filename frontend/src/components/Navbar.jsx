@@ -1,3 +1,4 @@
+// src/components/Navbar.jsx
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import DarkModeToggle from "./DarkModeToggle";
@@ -41,15 +42,11 @@ export default function Navbar() {
     justifyContent: "center",
   };
 
-  const logoutIconStyle = {
-    width: 20,
-    height: 20,
-  };
-
-  const cartIconStyle = {
+  const iconStyle = {
     width: 28,
     height: 28,
     cursor: "pointer",
+    marginRight: "8px",
   };
 
   return (
@@ -88,10 +85,12 @@ export default function Navbar() {
           className="nav"
           style={{ display: "flex", gap: "12px", alignItems: "center" }}
         >
+          {/* Home link for non-admins */}
           {(!user || user.role !== "admin") && (
             <NavLink to="/" style={linkStyle}>{t("home")}</NavLink>
           )}
 
+          {/* Guest links */}
           {!user && (
             <>
               <NavLink to="/login" style={linkStyle}>{t("login")}</NavLink>
@@ -99,6 +98,7 @@ export default function Navbar() {
             </>
           )}
 
+          {/* Logged-in user links (non-admin) */}
           {user && user.role !== "admin" && (
             <>
               <NavLink to="/orders" style={linkStyle}>{t("orders")}</NavLink>
@@ -107,6 +107,7 @@ export default function Navbar() {
             </>
           )}
 
+          {/* Admin links */}
           {user && user.role === "admin" && (
             <>
               <NavLink to="/userdashboard" style={linkStyle}>{t("userdashboard")}</NavLink>
@@ -121,17 +122,18 @@ export default function Navbar() {
         <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
           <DarkModeToggle />
 
-          {/* Cart icon for logged-in users only */}
+          {/* Cart icon for non-admins */}
           {user && user.role !== "admin" && (
             <Link to="/cart">
               <img
                 src="https://cdn-icons-png.flaticon.com/512/263/263142.png"
                 alt={t("cart")}
-                style={cartIconStyle}
+                style={iconStyle}
               />
             </Link>
           )}
 
+          {/* Guest order button */}
           {!user && (
             <Link
               to="/login"
@@ -142,16 +144,39 @@ export default function Navbar() {
             </Link>
           )}
 
+          {/* Admin: Promotions + Menu icons */}
+          {user && user.role === "admin" && (
+            <>
+              <Link to="/adminpromos" style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src="https://tse3.mm.bing.net/th/id/OIP._YAayfvyzHi9OgQ70JWJBgHaHa?pid=Api&P=0&h=180"
+                  alt={t("promotions")}
+                  style={iconStyle}
+                />
+              </Link>
+
+              <Link to="/adminmenu" style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src="https://www.creativefabrica.com/wp-content/uploads/2023/05/10/Pizza-menu-logo-Decorative-color-design-Graphics-69339231-1-1-580x387.png"
+                  alt={t("menu")}
+                  style={iconStyle}
+                />
+              </Link>
+            </>
+          )}
+
+          {/* Logout button */}
           {user && (
             <button onClick={logout} style={logoutButtonStyle}>
               <img
                 src="https://cdn-icons-png.flaticon.com/512/1828/1828479.png"
                 alt={t("logout")}
-                style={logoutIconStyle}
+                style={{ width: 20, height: 20 }}
               />
             </button>
           )}
 
+          {/* Language Switcher */}
           <LanguageSwitcher />
         </div>
       </div>

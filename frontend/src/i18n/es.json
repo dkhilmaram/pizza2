@@ -220,8 +220,24 @@
     "write_a_reply": "Escribe una respuesta...",
      "reply": "Responder",
      "userdashboard": "Panel de Usuario",
+      "user dashboard": "Panel de Usuario",
   "orderdashboard": "Panel de Pedidos",
- "rate": "Calificar"  
+ "rate": "Calificar" ,
+ "order dashboard": "Panel de Pedidos",
+
+  "total_price": "Precio Total",
+  "status": "Estado",
+ 
+  "order_deleted_success": "Pedido eliminado con éxito",
+  "error_deleting_order": "Error al eliminar el pedido",
+  "status_updated_success": "Estado del pedido actualizado con éxito",
+  "error_updating_status": "Error al actualizar el estado",
+  "confirm_delete_order": "¿Está seguro de que desea eliminar este pedido?",
+  "pending": "Pendiente",
+  "preparing": "Preparando",
+  "delivering": "En reparto",
+  "completed": "Completado",
+  "canceled": "Cancelado" 
      
 
 }

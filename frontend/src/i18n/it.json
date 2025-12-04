@@ -222,9 +222,26 @@
       "write_a_reply": "Scrivi una risposta...",
         "reply": "Rispondi",
          "userdashboard": "Cruscotto Utente",
+          "user dashboard": "Cruscotto Utente",
   "orderdashboard": "Cruscotto Ordini",
  
-  "rate": "Valuta"     
+  "rate": "Valuta"  ,
+  "order dashboard": "Cruscotto Ordini",
+
+  "total_price": "Prezzo Totale",
+  "status": "Stato",
+ 
+  "order_deleted_success": "Ordine eliminato con successo",
+  "error_deleting_order": "Errore durante l'eliminazione dell'ordine",
+  "status_updated_success": "Stato dell'ordine aggiornato con successo",
+  "error_updating_status": "Errore durante l'aggiornamento dello stato",
+  "confirm_delete_order": "Sei sicuro di voler eliminare questo ordine?",
+  "pending": "In sospeso",
+  "preparing": "In preparazione",
+  "delivering": "In consegna",
+  "completed": "Completato",
+  "canceled": "Annullato"
+  
 
 
 }

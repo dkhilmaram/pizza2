@@ -18,7 +18,9 @@ import BoxMessages from "./components/BoxMessage";
 import CustomPizza from "./components/customizePizza";
 import SeeOrders from "./components/SeeOrders";
 import PizzaPetes from "./components/PizzaPetes";
-import CartPage from "./components/cart"; // New CartPage import
+import CartPage from "./components/cart";
+import AdminPromo from "./components/adminPromo";
+import AdminMenu from "./components/adminmenu"; // ✅ corrected import
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -32,18 +34,13 @@ export default function App() {
 
       <main className="container-page" style={{ paddingTop: 24, paddingBottom: 24 }}>
         <Routes>
-
-          {/* Home / Landing */}
+          {/* Home */}
           <Route
             path="/"
             element={
-              !token ? (
-                <Welcome darkMode={darkMode} />
-              ) : user.role === "admin" ? (
-                <AdminDashboard darkMode={darkMode} />
-              ) : (
-                <Welcome darkMode={darkMode} />
-              )
+              !token ? <Welcome darkMode={darkMode} /> :
+              user?.role === "admin" ? <AdminDashboard darkMode={darkMode} /> :
+              <Welcome darkMode={darkMode} />
             }
           />
 
@@ -62,7 +59,7 @@ export default function App() {
             }
           />
 
-          {/* Admin Routes */}
+          {/* Admin routes */}
           <Route
             path="/userdashboard"
             element={
@@ -71,7 +68,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/orderdashboard"
             element={
@@ -80,7 +76,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/boxmessages"
             element={
@@ -89,8 +84,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* Admin-only PizzaPetes page */}
           <Route
             path="/rate"
             element={
@@ -99,22 +92,32 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* User Orders */}
           <Route
-            path="/orders"
+            path="/adminpromos"
             element={
-              <ProtectedRoute>
-                {user?.role === "admin" ? (
-                  <SeeOrders darkMode={darkMode} />
-                ) : (
-                  <CustomPizza darkMode={darkMode} />
-                )}
+              <ProtectedRoute role="admin">
+                <AdminPromo darkMode={darkMode} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adminmenu"
+            element={
+              <ProtectedRoute role="admin">
+                <AdminMenu darkMode={darkMode} />
               </ProtectedRoute>
             }
           />
 
-          {/* Optional pizza route */}
+          {/* User orders */}
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                {user?.role === "admin" ? <SeeOrders darkMode={darkMode} /> : <CustomPizza darkMode={darkMode} />}
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/pizza"
             element={
@@ -123,8 +126,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* Cart Page */}
           <Route
             path="/cart"
             element={
@@ -140,7 +141,6 @@ export default function App() {
           <Route path="/menu" element={<Menu darkMode={darkMode} />} />
           <Route path="/about" element={<About darkMode={darkMode} />} />
           <Route path="/contact" element={<Contact darkMode={darkMode} />} />
-
         </Routes>
       </main>
     </BrowserRouter>

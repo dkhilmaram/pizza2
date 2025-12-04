@@ -1,104 +1,228 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import ConfirmModal from "./ConfirmModal";
+import { getOrders } from "../services/orders";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 
-export default function OrdersPage() {
+export default function SeeOrders({ darkMode }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
 
   const [orders, setOrders] = useState([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loadingOrders, setLoadingOrders] = useState(true);
+  const [message, setMessage] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+
+  // Dark mode
+  useEffect(() => {
+    if (darkMode) document.body.classList.add("dark");
+    else document.body.classList.remove("dark");
+  }, [darkMode]);
+
+  const loadOrders = async () => {
+    setLoadingOrders(true);
+    try {
+      const data = await getOrders("/");
+      setOrders(data || []);
+    } catch (err) {
+      console.error(err);
+      setMessage(t("failed_load_orders"));
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
 
   useEffect(() => {
-    const loadOrders = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setError(t("not_authenticated"));
-        setLoading(false);
-        return;
-      }
-
-      try {
-        // Get current user info
-        const resUser = await fetch("/api/users/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!resUser.ok) throw new Error("Failed to get user info");
-        const currentUser = await resUser.json();
-
-        const isAdmin = currentUser.role === "admin";
-
-        // Fetch orders depending on role
-        const resOrders = await fetch(
-          isAdmin ? "/api/orders" : "/api/orders/me",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        if (!resOrders.ok) throw new Error("Failed to load orders");
-        const data = await resOrders.json();
-
-        setOrders(data);
-      } catch (err) {
-        console.error(err);
-        setError(t("failed_load_orders"));
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadOrders();
-  }, [t]);
+  }, []);
+
+  // Auto-hide messages
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(""), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
+  const handleAskDelete = (id) => {
+    setSelectedOrderId(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    setShowDeleteConfirm(false);
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:5000/api/orders/${selectedOrderId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setMessage(t("order_deleted_success"));
+      loadOrders();
+    } catch (err) {
+      console.error(err);
+      setMessage(err.response?.data?.message || t("error_deleting_order"));
+    } finally {
+      setSelectedOrderId(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setSelectedOrderId(null);
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5000/api/orders/${orderId}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setMessage(t("status_updated_success"));
+      loadOrders();
+    } catch (err) {
+      console.error(err);
+      setMessage(err.response?.data?.message || t("error_updating_status"));
+    }
+  };
+
+  // Function to return badge color based on status
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "pending":
+        return "#FFA500"; // orange
+      case "preparing":
+        return "#1E90FF"; // blue
+      case "delivering":
+        return "#FF69B4"; // pink
+      case "completed":
+        return "#32CD32"; // green
+      case "canceled":
+        return "#FF0000"; // red
+      default:
+        return "#000000"; // black for unknown
+    }
+  };
 
   return (
     <div
-      className="container-page"
-      style={{ direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left" }}
+      style={{
+        direction: isRTL ? "rtl" : "ltr",
+        textAlign: isRTL ? "right" : "left",
+        width: "100%",
+        minHeight: "100vh",
+        padding: "20px",
+      }}
     >
-      <h2 style={{ color: "#b91c1c", marginBottom: 20 }}>{t("orders")}</h2>
+      <h2 style={{ fontWeight: 800, marginBottom: 20 }}>{t("order dashboard")}</h2>
 
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      {loading ? (
-        <div>{t("loading_orders")}</div>
-      ) : (
-        <table className="table">
+      {showDeleteConfirm && (
+        <ConfirmModal
+          message={t("confirm_delete_order")}
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+        />
+      )}
+
+      {message && <div className="msg">{message}</div>}
+
+      <div
+        style={{
+          width: "100%",
+          height: "calc(100vh - 150px)",
+          overflow: "auto",
+        }}
+      >
+        <table
+          className="table"
+          style={{
+            width: "100%",
+            tableLayout: "auto",
+            minWidth: "1000px", // prevent columns from being too narrow
+          }}
+        >
           <thead>
             <tr>
               <th>{t("order_id")}</th>
               <th>{t("user")}</th>
               <th>{t("items")}</th>
-              <th>{t("total")}</th>
+              <th>{t("total_price")}</th>
               <th>{t("status")}</th>
+              <th>{t("actions")}</th>
             </tr>
           </thead>
           <tbody>
-            {orders.length === 0 ? (
+            {loadingOrders ? (
               <tr>
-                <td colSpan="5" style={{ textAlign: "center" }}>
-                  {t("no_orders_found")}
+                <td colSpan="6" style={{ textAlign: "center" }}>
+                  {t("loading_orders")}
                 </td>
               </tr>
-            ) : (
+            ) : orders.length > 0 ? (
               orders.map((order) => (
                 <tr key={order._id}>
-                  <td>{order._id}</td>
-                  <td>{order.user?.name || "—"}</td>
+                  <td>{order._id.slice(0, 8)}</td>
                   <td>
-                    {order.items.map((i) => (
-                      <div key={i.name}>
-                        {i.name} × {i.quantity} (${i.price})
+                    {order.user?.name} ({order.user?.email})
+                  </td>
+                  <td>
+                    {order.items.map((item) => (
+                      <div key={item._id}>
+                        {item.name} x{item.quantity} (${item.price})
                       </div>
                     ))}
                   </td>
-                  <td>${order.totalPrice}</td>
-                  <td>{order.status}</td>
+                  <td>{order.totalPrice.toFixed(2)}</td>
+                  <td>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      {/* Badge */}
+                      <span
+                        style={{
+                          width: "12px",
+                          height: "12px",
+                          borderRadius: "50%",
+                          backgroundColor: getStatusColor(order.status),
+                          display: "inline-block",
+                        }}
+                      ></span>
+
+                      {/* Dropdown */}
+                      <select
+                        value={order.status}
+                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                        className="select"
+                        style={{ color: getStatusColor(order.status), fontWeight: "bold" }}
+                      >
+                        <option value="pending">{t("pending")}</option>
+                        <option value="preparing">{t("preparing")}</option>
+                        <option value="delivering">{t("delivering")}</option>
+                        <option value="completed">{t("completed")}</option>
+                        <option value="canceled">{t("canceled")}</option>
+                      </select>
+                    </div>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => handleAskDelete(order._id)}
+                    >
+                      {t("delete")}
+                    </button>
+                  </td>
                 </tr>
               ))
+            ) : (
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center" }}>
+                  {t("no_orders_found")}
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
-      )}
+      </div>
     </div>
   );
 }

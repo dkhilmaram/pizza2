@@ -6,52 +6,63 @@ export default function CartPage() {
   const [discount, setDiscount] = useState(0);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [promotions, setPromotions] = useState([]);
 
-  const promotions = {
-    PIZZA10: 0.1,
-    PIZZA20: 0.2,
-    BIENVENUE10: 0.1,
-    "2POUR1": 0.5,
-    GROUPE50: 0.5,
-    GRATUIT: 1.0,
-    MARGERITA: 0.15,
-    LIVRAISON0: 0.0,
-  };
+  // Fetch promotions from backend
+  useEffect(() => {
+    const fetchPromos = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/promotions");
+        const data = await res.json();
+        setPromotions(Array.isArray(data) ? data : data.promotions || []);
+      } catch (err) {
+        console.error("Failed to fetch promotions:", err);
+        setPromotions([]);
+      }
+    };
+    fetchPromos();
+  }, []);
 
+  // Load cart and active coupon from localStorage
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(storedCart);
 
-    const active = localStorage.getItem("activeCoupon");
-    if (active && promotions[active]) {
-      setCouponCode(active);
-      setDiscount(promotions[active]);
-      setMessage(`Coupon applied: ${promotions[active] * 100}% off`);
+    const activeCode = localStorage.getItem("activeCoupon");
+    if (activeCode && promotions.length) {
+      const promo = promotions.find((p) => p.code.toUpperCase() === activeCode.toUpperCase());
+      if (promo) {
+        setCouponCode(activeCode);
+        setDiscount(promo.discount ?? 0);
+        setMessage(`Coupon applied: ${((promo.discount ?? 0) * 100).toFixed(0)}% off`);
+      }
     }
-  }, []);
+  }, [promotions]);
 
+  // Update item quantity
   const updateQuantity = (id, delta) => {
-    const updated = cart.map(item =>
-      (item.id === id || item._id === id)
-        ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-        : item
+    const updated = cart.map((item) =>
+      item._id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
     );
     setCart(updated);
     localStorage.setItem("cart", JSON.stringify(updated));
   };
 
+  // Remove item
   const removeItem = (id) => {
-    const updated = cart.filter(item => item.id !== id && item._id !== id);
+    const updated = cart.filter((item) => item._id !== id);
     setCart(updated);
     localStorage.setItem("cart", JSON.stringify(updated));
   };
 
+  // Apply coupon
   const applyCoupon = () => {
     const code = couponCode.trim().toUpperCase();
-    if (promotions[code]) {
-      setDiscount(promotions[code]);
-      setMessage(`Coupon applied: ${promotions[code] * 100}% off`);
-      localStorage.setItem("activeCoupon", code);
+    const promo = promotions.find((p) => p.code.toUpperCase() === code);
+    if (promo) {
+      setDiscount(promo.discount ?? 0);
+      setMessage(`Coupon applied: ${((promo.discount ?? 0) * 100).toFixed(0)}% off`);
+      localStorage.setItem("activeCoupon", promo.code);
     } else {
       setDiscount(0);
       setMessage("Invalid coupon");
@@ -59,31 +70,30 @@ export default function CartPage() {
     }
   };
 
+  // Calculate totals
   const totalPrice = cart.reduce(
-    (acc, item) => acc + parseFloat(item.price) * item.quantity,
+    (acc, item) => acc + (parseFloat(item.price) || 0) * item.quantity,
+    0
+  );
+  const discountedTotal = cart.reduce(
+    (acc, item) => acc + ((parseFloat(item.price) || 0) * (1 - (item.discount ?? discount))) * item.quantity,
     0
   );
 
-  const discountedTotal = totalPrice * (1 - discount);
-
+  // Checkout
   const handleCheckout = async () => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      return alert("Please log in to place an order.");
-    }
-    if (cart.length === 0) {
-      return alert("Your cart is empty!");
-    }
+    if (!token) return alert("Please log in to place an order.");
+    if (cart.length === 0) return alert("Your cart is empty!");
 
     setLoading(true);
 
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-
     const orderData = {
-      items: cart.map(item => ({
-        name: item.name || "Unknown Pizza",
+      items: cart.map((item) => ({
+        name: item.name || "Unknown",
         description: item.description || "",
-        price: parseFloat(item.price),
+        price: parseFloat(item.price) || 0,
         quantity: item.quantity,
       })),
       totalPrice: discountedTotal,
@@ -104,19 +114,14 @@ export default function CartPage() {
       });
 
       const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to place order");
-      }
+      if (!res.ok) throw new Error(data.message || "Failed to place order");
 
       setMessage("Order placed successfully! Redirecting...");
-
       setTimeout(() => {
         localStorage.removeItem("cart");
         localStorage.removeItem("activeCoupon");
         window.location.href = "/order-success";
       }, 1200);
-
     } catch (err) {
       console.error(err);
       setMessage(`Failed to place order: ${err.message}`);
@@ -137,7 +142,7 @@ export default function CartPage() {
         <>
           {cart.map((item) => (
             <div
-              key={item.id || item._id}
+              key={item._id}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -150,13 +155,18 @@ export default function CartPage() {
               <div>
                 <h2>{item.name}</h2>
                 <p>{item.description}</p>
-                <p>{parseFloat(item.price).toFixed(2)} €</p>
+                <p>{item.price ? parseFloat(item.price).toFixed(2) + " €" : "Free"}</p>
               </div>
               <div>
-                <button onClick={() => updateQuantity(item.id || item._id, -1)}>-</button>
+                <button onClick={() => updateQuantity(item._id, -1)}>-</button>
                 <span style={{ margin: "0 10px" }}>{item.quantity}</span>
-                <button onClick={() => updateQuantity(item.id || item._id, 1)}>+</button>
-                <button onClick={() => removeItem(item.id || item._id)} style={{ marginLeft: "10px" }}>Remove</button>
+                <button onClick={() => updateQuantity(item._id, 1)}>+</button>
+                <button
+                  onClick={() => removeItem(item._id)}
+                  style={{ marginLeft: "10px" }}
+                >
+                  Remove
+                </button>
               </div>
             </div>
           ))}

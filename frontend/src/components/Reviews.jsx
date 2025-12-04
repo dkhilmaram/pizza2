@@ -34,6 +34,7 @@ export default function Reviews() {
     if (token) fetchUserRating();
   }, []);
 
+  // ================= Ratings =================
   const fetchRatings = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/reviews/ratings");
@@ -58,16 +59,6 @@ export default function Reviews() {
     }
   };
 
-  const fetchComments = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/reviews/comments");
-      const data = await res.json();
-      setComments(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const submitRating = async () => {
     if (!token) return alert(t("ratings_must_login"));
     if (rating < 1) return alert(t("ratings_select_rating"));
@@ -84,6 +75,17 @@ export default function Reviews() {
         fetchRatings();
         fetchComments();
       } else alert(data.message || "Unknown error");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ================= Comments =================
+  const fetchComments = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/reviews/comments");
+      const data = await res.json();
+      setComments(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
     }
@@ -134,12 +136,14 @@ export default function Reviews() {
     }
   };
 
+  // ================= Replies =================
   const handleReplyChange = (commentId, text) => {
     setReplyTexts(prev => ({ ...prev, [commentId]: text }));
   };
 
-  const submitReply = async (commentId, replierId, replierRole) => {
-    if (currentUserId === replierId && replierRole !== "admin") return alert("You cannot reply to your own comment");
+  const submitReply = async (commentId, commentUserId) => {
+    if (!token) return alert("Login required");
+    if (currentUserId === commentUserId) return alert("You cannot reply to your own comment");
 
     const text = replyTexts[commentId];
     if (!text || !text.trim()) return alert("Reply cannot be empty");
@@ -160,55 +164,23 @@ export default function Reviews() {
     }
   };
 
-  const containerStyle = {
-    padding: "40px 20px",
-    maxWidth: "900px",
-    margin: "0 auto",
-    borderRadius: "12px",
-    backgroundColor: "var(--card)",
-    color: "var(--text)",
-    direction: isRTL ? "rtl" : "ltr",
-    textAlign: isRTL ? "right" : "left",
-  };
-
-  const buttonStyle = {
-    marginTop: 10,
-    padding: "8px 15px",
-    borderRadius: 8,
-    fontWeight: "bold",
-    border: "none",
-    cursor: "pointer",
-    backgroundColor: "var(--primary)",
-    color: "var(--text)",
-  };
-
+  // ================= Styles =================
+  const containerStyle = { padding: "40px 20px", maxWidth: "900px", margin: "0 auto", borderRadius: "12px", backgroundColor: "var(--card)", color: "var(--text)", direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left" };
+  const buttonStyle = { marginTop: 10, padding: "8px 15px", borderRadius: 8, fontWeight: "bold", border: "none", cursor: "pointer", backgroundColor: "var(--primary)", color: "var(--text)" };
   const numberStyle = { width: 35, fontSize: 16, fontWeight: "bold", textAlign: "right" };
 
+  // ================= Render =================
   return (
     <div style={containerStyle}>
       <h1 style={{ textAlign: "center", color: "var(--primary)" }}>{t("ratings_title")}</h1>
-      <p style={{ textAlign: "center", marginTop: 8, color: "var(--text-secondary)" }}>
-        {t("ratings_description")}
-      </p>
+      <p style={{ textAlign: "center", marginTop: 8, color: "var(--text-secondary)" }}>{t("ratings_description")}</p>
 
-      {successMsg && (
-        <div style={{ background: "var(--success-bg)", padding: "10px 15px", borderRadius: 8, marginBottom: 15, color: "var(--success-text)", fontWeight: "bold" }}>
-          {successMsg}
-        </div>
-      )}
+      {successMsg && <div style={{ background: "var(--success-bg)", padding: "10px 15px", borderRadius: 8, marginBottom: 15, color: "var(--success-text)", fontWeight: "bold" }}>{successMsg}</div>}
 
-      {/* Ratings */}
-      <div style={{ marginBottom: 15 }}>
-        <strong>
-          {t("ratings_average")}: {average} / 5 —{" "}
-          {totalRaters === 1 ? t("ratings_rated_by_one") : t("ratings_rated_by_other", { count: totalRaters })}
-        </strong>
-      </div>
-
+      {/* Rating stars */}
+      <div style={{ marginBottom: 15 }}><strong>{t("ratings_average")}: {average} / 5 — {totalRaters === 1 ? t("ratings_rated_by_one") : t("ratings_rated_by_other", { count: totalRaters })}</strong></div>
       <div style={{ fontSize: 32, marginBottom: 10, display: "flex", justifyContent: isRTL ? "flex-end" : "flex-start" }}>
-        {[1, 2, 3, 4, 5].map(n => (
-          <span key={n} style={{ cursor: "pointer", color: n <= rating ? "gold" : "#bbb", margin: "0 2px" }} onClick={() => setRating(n)}>★</span>
-        ))}
+        {[1,2,3,4,5].map(n => <span key={n} style={{ cursor: "pointer", color: n <= rating ? "gold" : "#bbb", margin: "0 2px" }} onClick={() => setRating(n)}>★</span>)}
       </div>
       <button onClick={submitRating} style={buttonStyle}>{t("submit_rate")}</button>
 
@@ -237,22 +209,21 @@ export default function Reviews() {
         <div style={{ marginTop: 20 }}>
           {comments.map(c => {
             const isOwner = currentUserId === c.userId;
-            const canReply = (currentUserId && !isOwner) || currentUserRole === "admin";
+            const canReply = currentUserId && !isOwner || currentUserRole === "admin";
 
             return (
               <div key={c._id} style={{ borderBottom: "1px solid #ccc", padding: "10px 0", display: "flex", flexDirection: isRTL ? "row-reverse" : "row", gap: 10, justifyContent: "space-between" }}>
                 <div style={{ flex: 1 }}>
-                  <strong>{c.name}</strong> ({c.emailMasked})
+                  <strong>{c.name}</strong> {currentUserRole === "admin" || isOwner ? `(${c.emailMasked})` : ""}
                   <p style={{ margin: "4px 0" }}>{c.text}</p>
 
                   {isOwner && (
-  <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 4, cursor: "pointer" }}>
-    <span onClick={() => startEdit(c._id, c.text)}>✏️</span>
-    <span onClick={() => deleteComment(c._id)}>🗑️</span>
-  </div>
-)}
+                    <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 4, cursor: "pointer" }}>
+                      <span onClick={() => startEdit(c._id, c.text)}>✏️</span>
+                      <span onClick={() => deleteComment(c._id)}>🗑️</span>
+                    </div>
+                  )}
 
-                  {/* Replies */}
                   {c.replies && c.replies.length > 0 && (
                     <div style={{ marginTop: 6, paddingLeft: isRTL ? 0 : 16, paddingRight: isRTL ? 16 : 0 }}>
                       {c.replies.map(r => (
@@ -263,7 +234,6 @@ export default function Reviews() {
                     </div>
                   )}
 
-                  {/* Reply input */}
                   {canReply && (
                     <div style={{ marginTop: 6 }}>
                       <textarea
@@ -272,9 +242,7 @@ export default function Reviews() {
                         placeholder={t("write_a_reply") || "Write a reply..."}
                         style={{ width: "100%", minHeight: 40, padding: 6, borderRadius: 4 }}
                       />
-                      <button onClick={() => submitReply(c._id, c.userId, c.userRole)} style={{ ...buttonStyle, marginTop: 4 }}>
-                        {t("reply") || "Reply"}
-                      </button>
+                      <button onClick={() => submitReply(c._id, c.userId)} style={{ ...buttonStyle, marginTop: 4 }}>{t("reply") || "Reply"}</button>
                     </div>
                   )}
                 </div>

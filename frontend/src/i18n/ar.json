@@ -227,7 +227,23 @@
      "reply": "رد",
       "write_a_reply": "اكتب رد...",
        "userdashboard": "لوحة المستخدم",
+         "user dashboard": "لوحة المستخدم",
   "orderdashboard": "لوحة الطلبات",
- "rate": "قيّم"     
+ "rate": "قيّم"  ,
+ "order dashboard": "لوحة الطلبات",
+ 
+  "total_price": "السعر الإجمالي",
+  "status": "الحالة",
+ 
+  "order_deleted_success": "تم حذف الطلب بنجاح",
+  "error_deleting_order": "حدث خطأ أثناء حذف الطلب",
+  "status_updated_success": "تم تحديث حالة الطلب بنجاح",
+  "error_updating_status": "حدث خطأ أثناء تحديث الحالة",
+  "confirm_delete_order": "هل أنت متأكد أنك تريد حذف هذا الطلب؟",
+  "pending": "قيد الانتظار",
+  "preparing": "قيد التحضير",
+  "delivering": "قيد التوصيل",
+  "completed": "مكتمل",
+  "canceled": "ملغى"
 
 }
