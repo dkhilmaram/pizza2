@@ -240,8 +240,114 @@
   "preparing": "In preparazione",
   "delivering": "In consegna",
   "completed": "Completato",
-  "canceled": "Annullato"
+  "canceled": "Annullato",
+   
+    "managePromotions": "Admin — Gestisci Promozioni"
+  ,
+  "promo": {
+    "addPromotion": "Aggiungi Promozione",
+    "editPromotion": "Modifica Promozione",
+    "name": "Nome",
+    "description": "Descrizione",
+    "expirationDate": "Data di scadenza",
+    "code": "Codice Promozionale",
+    "price": "Prezzo (DT)",
+    "discount": "Sconto (%)",
+    "imageUrl": "URL Immagine",
+    "preview": "Anteprima",
+    "noImage": "Nessuna immagine"
+  },
+  "buttons": {
+    "save": "Salva Modifiche",
+    "add": "Aggiungi",
+    "edit": "Modifica",
+    "delete": "Cancella"
+  },
+  "labels": {
+    "expires": "Scade il",
+    "discount": "Sconto",
+    "price": "Prezzo",
+    "code": "Codice"
+  },
+  
+   
+    "save": "Salva modifiche",
+  
+    "loading": "Caricamento pizze...",
+    "deleteConfirm": "Sei sicuro?"
+  ,
+  "admin manage Pizzas": "Gestisci Pizze",
+  "edit Pizza": "Modifica Pizza",
+  "add Pizza": "Aggiungi Pizza",
+  "Name": "Nome",
+  "Price": "Prezzo",
+  "Ingredients": "Ingredienti",
+  "Image URL": "URL Immagine",
+  "saveChanges": "Salva Modifiche",
+
+  "no Image": "Nessuna Immagine",
+  "loading.pizzas": "Caricamento pizze...",
+
+  "confirm.delete": "Sei sicuro di voler eliminare questa pizza?",
+  "error.fetchPizzas": "Impossibile caricare le pizze.",
+  "error.deletePizza": "Impossibile eliminare la pizza.",
+  "error.savePizza": "Impossibile salvare la pizza.",
+  "error.invalidForm": "Compila correttamente tutti i campi.",
+   "your_cart": "Il Tuo Carrello",
+  "cart_empty": "Il tuo carrello è vuoto.",
+  "cart_items_count": "Hai {{count}} articolo(i) nel tuo carrello.",
+  "view_menu": "Vedi Menù",
+  "remove": "Rimuovere",
+  "coupon_code": "Codice Coupon",
+  "enter_coupon": "Inserisci il tuo codice",
+  "apply": "Applica",
+  "coupon_applied_percent": "Coupon  applicato: {{discount}}% di sconto!",
+  "coupon_applied_free_shipping": "Coupon  applicato: Spedizione gratuita!",
+  "invalid_coupon": "Codice coupon non valido.",
+ 
+  "checkout": "Vai al Checkout",
+  "custom_pizza": "Crea Pizza Personalizzata",
+   "orderSuccess": {
+    "title": "Il tuo ordine è confermato!",
+    "orderNumber": "Numero d'ordine",
+    "thankYou": "Grazie per il tuo ordine! Riceverai presto un'email di conferma.",
+    "backToMenu": "Torna al Menu",
+    "home": "Benvenuto"
+  },
+  "title": "Conferma ordine",
+    "subtitle": "Un ultimo passo per gustare le tue pizze!",
+    "personalInfo": "Informazioni personali",
+    "fullName": "Nome completo *",
+  
+    "deliveryAddress": "Indirizzo di consegna",
+   
+    "postalCode": "CAP *",
+    "instructions": "Istruzioni (opzionale)",
+    "options": "Opzioni",
+    "asap": "Il prima possibile (30-45 min)",
+    "in1h": "Tra 1 ora",
+    "in2h": "Tra 2 ore",
+    "evening": "Stasera (19:00-21:00)",
+    "paymentCard": "Carta di credito",
+    "paymentCash": "Contanti",
+    "summary": "Riepilogo",
+    "subtotal": "Subtotale",
+    "discount": "Sconto",
+  
+    "confirmOrder": "Conferma ordine",
+    "processing": "Elaborazione...",
+    "back": "Indietro",
+    "emptyCart": "Carrello vuoto",
+    "viewMenu": "Vedi menu",
+    "loginRequired": "Effettua il login",
+    "freeDelivery": "Consegna gratuita",
+      "seePromo": "Vedi Promo",
+    "retour": "Indietro"
+  
+  
+
+}
   
 
 
-}
+

@@ -250,9 +250,125 @@
   "preparing": "Preparing",
   "delivering": "Delivering",
   "completed": "Completed",
-  "canceled": "Canceled"
+
+  "canceled": "Canceled",
+
+  "admin": {
+    "managePromotions": "Admin — Manage Promotions"
+  },
+
+  "promo": {
+    "addPromotion": "Add Promotion",
+    "editPromotion": "Edit Promotion",
+    "name": "Name",
+    "description": "Description",
+    "expirationDate": "Expiration Date",
+    "code": "Promo Code",
+    "price": "Price (DT)",
+    "discount": "Discount (%)",
+    "imageUrl": "Image URL",
+    "preview": "Preview",
+    "noImage": "No Image"
+  },
+
+  "buttons": {
+    "save": "Save Changes",
+    "add": "Add Promotion",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+
+  "labels": {
+    "expires": "Expires",
+    "discount": "Discount",
+    "price": "Price",
+    "code": "Code"
+  },
+   "admin": {
+    "title": "Admin — Manage Pizzas",
+    "edit": "Edit Pizza",
+    "add": "Add Pizza",
+    "save": "Save Changes",
+    "preview": "Preview",
+    "loading": "Loading pizzas..."
+    
+  },
+"admin manage Pizzas": "Admin — Manage Pizzas",
+  "edit Pizza": "Edit Pizza",
+  "add Pizza": "Add Pizza",
+  "save Changes": "Save Changes",
+  "preview ": "Preview",
+  "no Image": "No image",
+  "loading.pizzas": "Loading pizzas...",
+  "edit": "Edit",
+  "delete": "Delete",
+  "error.fetchPizzas": "Failed to fetch pizzas. Check backend URL or server.",
+  "error.deletePizza": "Failed to delete pizza.",
+  "error.savePizza": "Failed to save pizza.",
+  "error.invalidForm": "All fields are required and price must be a number",
+  "confirm.delete": "Are you sure?",
+  "Name": "Name",
+  "Price": "Price",
+  "Ingredients": "Ingredients",
+  "Image URL": "Image URL",
+  "add Pizza": "Add Pizza",
+
+  "save Changes": "Save Changes",
+   "your_cart": "Your Cart",
+  "cart_empty": "Your cart is empty.",
+  "cart_items_count": "You have {{count}} item(s) in your cart.",
+  "view_menu": "View Menu",
+  "remove": "Remove",
+  "coupon_code": "Coupon Code",
+  "enter_coupon": "Enter your code",
+  "apply": "Apply",
+  "coupon_applied_percent": "Coupon  applied: {{discount}}% off!",
+  "coupon_applied_free_shipping": "Coupon  applied: Free Shipping!",
+  "invalid_coupon": "Invalid coupon code.",
+  "total": "Total",
+  "checkout": "Checkout",
+  "custom_pizza": "Create Custom Pizza",
+  "orderSuccess": {
+    "title": "Your order is confirmed!",
+    "orderNumber": "Order number",
+    "thankYou": "Thank you for your order! You will receive a confirmation email shortly.",
+    "backToMenu": "Back to Menu",
+    "home": "Home"
+  },
+   "title": "Finalize Order",
+  "subtitle": "Just one more step to enjoy your pizzas!",
+  "personalInfo": "Personal Information",
+  "fullName": "Full Name *",
+  "phone": "Phone *",
+  "email": "Email *",
+  "deliveryAddress": "Delivery Address",
+  "address": "Full Address *",
+  "city": "City *",
+  "postalCode": "Postal Code *",
+  "instructions": "Instructions (optional)",
+  "options": "Options",
+  "asap": "As soon as possible (30-45 min)",
+  "in1h": "In 1 hour",
+  "in2h": "In 2 hours",
+  "evening": "Tonight (7 PM - 9 PM)",
+  "paymentCard": "Credit Card",
+  "paymentCash": "Cash",
+  "summary": "Summary",
+  "subtotal": "Subtotal",
+  "discount": "Discount",
+  "total": "Total",
+  "confirmOrder": "Confirm Order",
+  "processing": "Processing...",
+  "back": "Back",
+  "emptyCart": "Empty Cart",
+  "viewMenu": "View Menu",
+  "loginRequired": "Please log in",
+  "freeDelivery": "Free Delivery",
+  "seePromo": "See Promo",
+    "retour": "Back"
 
 }
+
   
 
 

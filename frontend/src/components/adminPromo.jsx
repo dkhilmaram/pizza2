@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function AdminPromotionsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [promotions, setPromotions] = useState([]);
   const [editing, setEditing] = useState(null);
@@ -76,8 +76,7 @@ export default function AdminPromotionsPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}` },
           body: JSON.stringify(payload),
         });
 
@@ -119,7 +118,7 @@ export default function AdminPromotionsPage() {
 
   // ---------------- Delete ----------------
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this promotion?")) return;
+    if (!window.confirm(t("buttons.delete") + "?")) return;
 
     try {
       await fetch(`${API_URL}/${id}`, {
@@ -137,7 +136,15 @@ export default function AdminPromotionsPage() {
   // ========================== UI ==========================
   // ========================================================
   return (
-    <div className="container-page" style={{ padding: "2rem" }}>
+    <div
+      className="container-page"
+      style={{
+        padding: "2rem",
+        direction: i18n.language === "ar" ? "rtl" : "ltr",
+        textAlign: i18n.language === "ar" ? "right" : "left",
+      }}
+      dir={i18n.language === "ar" ? "rtl" : "ltr"}
+    >
       <h1
         style={{
           fontSize: "2.5rem",
@@ -146,7 +153,7 @@ export default function AdminPromotionsPage() {
           textAlign: "center",
         }}
       >
-        Admin — Manage Promotions
+        {t("admin.managePromotions")}
       </h1>
 
       {/* ---------------- FORM + PREVIEW ---------------- */}
@@ -163,13 +170,13 @@ export default function AdminPromotionsPage() {
         {/* LEFT — FORM */}
         <div>
           <h2 style={{ marginBottom: "1rem" }}>
-            {editing ? "Edit Promotion" : "Add Promotion"}
+            {editing ? t("promo.editPromotion") : t("promo.addPromotion")}
           </h2>
 
           <input
             className="input"
             name="name"
-            placeholder="Name"
+            placeholder={t("promo.name")}
             value={form.name}
             onChange={handleFormChange}
             required
@@ -178,7 +185,7 @@ export default function AdminPromotionsPage() {
           <input
             className="input"
             name="description"
-            placeholder="Description"
+            placeholder={t("promo.description")}
             value={form.description}
             onChange={handleFormChange}
             required
@@ -196,7 +203,7 @@ export default function AdminPromotionsPage() {
           <input
             className="input"
             name="code"
-            placeholder="Promo Code"
+            placeholder={t("promo.code")}
             value={form.code}
             onChange={handleFormChange}
             required
@@ -207,7 +214,7 @@ export default function AdminPromotionsPage() {
               type="number"
               className="input"
               name="price"
-              placeholder="Price (DT)"
+              placeholder={t("promo.price")}
               value={form.price}
               onChange={handleFormChange}
               required
@@ -217,7 +224,7 @@ export default function AdminPromotionsPage() {
               type="number"
               className="input"
               name="discount"
-              placeholder="Discount (%)"
+              placeholder={t("promo.discount")}
               value={form.discount}
               onChange={handleFormChange}
               required
@@ -227,7 +234,7 @@ export default function AdminPromotionsPage() {
           <input
             className="input"
             name="imageUrl"
-            placeholder="Image URL"
+            placeholder={t("promo.imageUrl")}
             value={form.imageUrl}
             onChange={handleFormChange}
           />
@@ -238,13 +245,13 @@ export default function AdminPromotionsPage() {
             onClick={handleSubmit}
             style={{ marginTop: "1rem" }}
           >
-            {editing ? "Save Changes" : "Add Promotion"}
+            {editing ? t("buttons.save") : t("buttons.add")}
           </button>
         </div>
 
         {/* RIGHT — PREVIEW */}
         <div style={{ textAlign: "center" }}>
-          <h3 style={{ marginBottom: "1rem" }}>Preview</h3>
+          <h3 style={{ marginBottom: "1rem" }}>{t("promo.preview")}</h3>
 
           {form.imageUrl ? (
             <img
@@ -271,7 +278,7 @@ export default function AdminPromotionsPage() {
                 color: "#777",
               }}
             >
-              No Image
+              {t("promo.noImage")}
             </div>
           )}
         </div>
@@ -301,25 +308,39 @@ export default function AdminPromotionsPage() {
               <h3 style={{ color: "var(--primary)" }}>{p.name.en}</h3>
               <p>{p.description.en}</p>
 
-              <strong>Price: {p.price} DT</strong>
-              <br />
-              <strong>Discount: {p.discount * 100}%</strong>
-              <br />
               <strong>
-                Expires: {new Date(p.expirationDate).toLocaleDateString()}
+                {t("labels.price")}: {p.price} DT
               </strong>
               <br />
-              <strong>Code: {p.code}</strong>
+              <strong>
+                {t("labels.discount")}: {p.discount * 100}%
+              </strong>
+              <br />
+              <strong>
+                {t("labels.expires")}:{" "}
+                {new Date(p.expirationDate).toLocaleDateString()}
+              </strong>
+              <br />
+              <strong>
+                {t("labels.code")}: {p.code}
+              </strong>
 
-              <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
+              <div
+                style={{
+                  marginTop: "1rem",
+                  display: "flex",
+                  gap: "0.5rem",
+                  justifyContent: i18n.language === "ar" ? "flex-end" : "flex-start",
+                }}
+              >
                 <button className="btn btn-primary" onClick={() => handleEdit(p)}>
-                  Edit
+                  {t("buttons.edit")}
                 </button>
                 <button
                   className="btn btn-muted"
                   onClick={() => handleDelete(p._id)}
                 >
-                  Delete
+                  {t("buttons.delete")}
                 </button>
               </div>
             </div>

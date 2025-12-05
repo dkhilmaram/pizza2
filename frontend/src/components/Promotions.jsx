@@ -38,13 +38,15 @@ const PromotionsPage = () => {
       year: "numeric",
     });
 
-  const copyCode = (code) => {
-    navigator.clipboard.writeText(code);
-    localStorage.setItem("activeCoupon", code);
-    setShowCopied(true);
-    setTimeout(() => setShowCopied(false), 3000);
-  };
-
+ const copyCode = (code, discount) => {
+  navigator.clipboard.writeText(code);
+  localStorage.setItem(
+    "activeCoupon",
+    JSON.stringify({ code, discount }) // store both
+  );
+  setShowCopied(true);
+  setTimeout(() => setShowCopied(false), 3000);
+};
   // ⭐ FIXED WITH PRICE
   const addToCart = (promo) => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];

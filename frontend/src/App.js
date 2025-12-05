@@ -20,7 +20,9 @@ import SeeOrders from "./components/SeeOrders";
 import PizzaPetes from "./components/PizzaPetes";
 import CartPage from "./components/cart";
 import AdminPromo from "./components/adminPromo";
-import AdminMenu from "./components/adminmenu"; // ✅ corrected import
+import AdminMenu from "./components/adminmenu"; 
+import OrderConfirmationPage from "./components/OrderConfirmationPage"; // ✅ added
+import OrderSuccessPage from "./components/OrderSuccessPage"; // ✅ added
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -131,6 +133,26 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <CartPage darkMode={darkMode} />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Checkout / Order Confirmation */}
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <OrderConfirmationPage darkMode={darkMode} />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Order Success */}
+          <Route
+            path="/order-success"
+            element={
+              <ProtectedRoute>
+                <OrderSuccessPage darkMode={darkMode} />
               </ProtectedRoute>
             }
           />

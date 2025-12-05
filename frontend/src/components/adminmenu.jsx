@@ -1,7 +1,11 @@
 // src/admin/AdminMenuPage.jsx
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function AdminMenuPage() {
+  const { t, i18n } = useTranslation();
+  const isRTL = i18n.language === "ar";
+
   const [pizzas, setPizzas] = useState([]);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ name: "", price: "", ingredients: "", img: "" });
@@ -10,7 +14,9 @@ export default function AdminMenuPage() {
 
   const API_URL = "http://localhost:5000/api/pizzas";
 
-  useEffect(() => { fetchPizzas(); }, []);
+  useEffect(() => {
+    fetchPizzas();
+  }, []);
 
   const fetchPizzas = async () => {
     try {
@@ -22,7 +28,7 @@ export default function AdminMenuPage() {
       setError("");
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch pizzas. Check backend URL or server.");
+      setError(t("error.fetchPizzas"));
     } finally {
       setLoading(false);
     }
@@ -39,23 +45,24 @@ export default function AdminMenuPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure?")) return;
+    if (!window.confirm(t("confirm.delete"))) return;
     try {
       const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       fetchPizzas();
     } catch (err) {
       console.error(err);
-      setError("Failed to delete pizza.");
+      setError(t("error.deletePizza"));
     }
   };
 
   const handleSubmit = async () => {
     const numericPrice = parseFloat(form.price);
     if (!form.name || !form.ingredients || isNaN(numericPrice) || !form.img) {
-      setError("All fields are required and price must be a number");
+      setError(t("error.invalidForm"));
       return;
     }
+
     try {
       setLoading(true);
       const url = editing ? `${API_URL}/${editing}` : API_URL;
@@ -66,6 +73,7 @@ export default function AdminMenuPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, price: numericPrice }),
       });
+
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       setForm({ name: "", price: "", ingredients: "", img: "" });
@@ -74,14 +82,21 @@ export default function AdminMenuPage() {
       setError("");
     } catch (err) {
       console.error(err);
-      setError("Failed to save pizza.");
+      setError(t("error.savePizza"));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="container-page" style={{ padding: "2rem" }}>
+    <div
+      className="container-page"
+      style={{
+        padding: "2rem",
+        direction: isRTL ? "rtl" : "ltr",
+        textAlign: isRTL ? "right" : "left",
+      }}
+    >
       <h1
         style={{
           fontSize: "2.5rem",
@@ -90,7 +105,7 @@ export default function AdminMenuPage() {
           textAlign: "center",
         }}
       >
-        Admin — Manage Pizzas
+        {t("admin manage Pizzas")}
       </h1>
 
       {/* FORM + PREVIEW */}
@@ -106,31 +121,35 @@ export default function AdminMenuPage() {
       >
         {/* LEFT — FORM */}
         <div>
-          <h2>{editing ? "Edit Pizza" : "Add Pizza"}</h2>
+          <h2>{editing ? t("edit Pizza") : t("add Pizza")}</h2>
           {error && <p className="msg">{error}</p>}
 
           <input
             className="input"
-            placeholder="Name"
+            placeholder={t("Name")}
             value={form.name}
+            style={{ textAlign: isRTL ? "right" : "left" }}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
           <input
             className="input"
-            placeholder="Price"
+            placeholder={t("Price")}
             value={form.price}
+            style={{ textAlign: isRTL ? "right" : "left" }}
             onChange={(e) => setForm({ ...form, price: e.target.value })}
           />
           <input
             className="input"
-            placeholder="Ingredients"
+            placeholder={t("Ingredients")}
             value={form.ingredients}
+            style={{ textAlign: isRTL ? "right" : "left" }}
             onChange={(e) => setForm({ ...form, ingredients: e.target.value })}
           />
           <input
             className="input"
-            placeholder="Image URL"
+            placeholder={t("Image URL")}
             value={form.img}
+            style={{ textAlign: isRTL ? "right" : "left" }}
             onChange={(e) => setForm({ ...form, img: e.target.value })}
           />
 
@@ -140,18 +159,18 @@ export default function AdminMenuPage() {
             disabled={loading}
             style={{ marginTop: "1rem" }}
           >
-            {editing ? "Save Changes" : "Add Pizza"}
+            {editing ? t("save Changes") : t("add Pizza")}
           </button>
         </div>
 
         {/* RIGHT — PREVIEW */}
         <div style={{ textAlign: "center" }}>
-          <h3 style={{ marginBottom: "1rem" }}>Preview</h3>
+          <h3 style={{ marginBottom: "1rem" }}>{t("preview ")}</h3>
 
           {form.img ? (
             <img
               src={form.img}
-              alt="Preview"
+              alt={t("preview ")}
               style={{
                 width: "100%",
                 height: "250px",
@@ -159,9 +178,7 @@ export default function AdminMenuPage() {
                 borderRadius: "0.5rem",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
               }}
-              onError={(e) => {
-                e.target.src = "";
-              }}
+              onError={(e) => (e.target.src = "")}
             />
           ) : (
             <div
@@ -176,7 +193,7 @@ export default function AdminMenuPage() {
                 color: "#777",
               }}
             >
-              No image
+              {t("no Image")}
             </div>
           )}
         </div>
@@ -184,7 +201,7 @@ export default function AdminMenuPage() {
 
       {/* GRID OF PIZZAS */}
       {loading ? (
-        <p>Loading pizzas...</p>
+        <p>{t("loading.pizzas")}</p>
       ) : (
         <div
           style={{
@@ -210,13 +227,14 @@ export default function AdminMenuPage() {
                     marginTop: "1rem",
                     display: "flex",
                     gap: "0.5rem",
+                    flexDirection: isRTL ? "row-reverse" : "row",
                   }}
                 >
                   <button className="btn btn-primary" onClick={() => handleEdit(p)}>
-                    Edit
+                    {t("edit")}
                   </button>
                   <button className="btn btn-muted" onClick={() => handleDelete(p._id)}>
-                    Delete
+                    {t("delete")}
                   </button>
                 </div>
               </div>
