@@ -1,0 +1,239 @@
+/* ===============================
+   App-wide Light / Dark Theme
+   =============================== */
+
+/* Light mode variables */
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --brand: #dc2626;
+  --primary: #dc2626;
+  --btn-muted-bg: #f9fafb;
+  --link: #dc2626;
+  --nav-bg: #f9fafb;
+  --nav-active-bg: #ffe4e6;
+  --thead-bg: #f3f4f6;
+  --thead-text: #111827;
+  --badge-admin-bg: #fde2e2; /* clearer for role badge */
+  --badge-user-bg: #e0f2fe;
+  --msg-bg: #e5e7eb;
+  --msg-text: #111827;
+}
+
+/* Dark mode variables */
+.dark {
+  --bg: #0f1115;
+  --card: #15181d;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --border: #2a2f36;
+  --brand: #ff6b6b;
+  --primary: #ef4444;
+  --btn-muted-bg: #1a1f25;
+  --link: #ff6b6b;
+  --nav-bg: #181b1f;
+  --nav-active-bg: #2a2f36;
+  --thead-bg: #1e232a;
+  --thead-text: #ffffff;
+  --badge-admin-bg: #631414;
+  --badge-user-bg: #1a3b5c;
+  --msg-bg: #23272b;
+  --msg-text: #e5e7eb;
+}
+
+/* ===============================
+   Base Styles
+   =============================== */
+html, body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ===============================
+   Header / Navbar
+   =============================== */
+.header {
+  background: var(--nav-bg);
+  color: var(--brand);
+  border-bottom: 1px solid var(--border);
+}
+.header .inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 24px;
+}
+.brand a {
+  color: var(--brand);
+  font-weight: 800;
+  font-size: 20px;
+  text-decoration: none;
+}
+.nav {
+  display: flex;
+  gap: 16px;
+}
+.nav a {
+  color: var(--link);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.nav a.active, .nav a:hover {
+  background: var(--nav-active-bg);
+}
+
+/* ===============================
+   Buttons
+   =============================== */
+.btn {
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.btn-muted {
+  background: var(--btn-muted-bg);
+  color: var(--brand);
+  border-color: var(--brand);
+}
+
+/* ===============================
+   Cards, Inputs, Selects
+   =============================== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  color: var(--text);
+}
+.input, .select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  outline: none;
+}
+.input::placeholder {
+  color: var(--muted);
+}
+.input:focus, .select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+}
+
+/* ===============================
+   Tables
+   =============================== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.table thead th {
+  background: var(--thead-bg);
+  color: var(--thead-text);
+  font-weight: 700;
+  padding: 10px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.table tbody td {
+  background: var(--card);
+  color: var(--text);
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ===============================
+   Badges (roles)
+   =============================== */
+.badge {
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge-admin {
+  background: var(--badge-admin-bg);
+  color: #b91c1c;
+}
+.badge-user {
+  background: var(--badge-user-bg);
+  color: #0369a1;
+}
+
+/* ===============================
+   Messages
+   =============================== */
+.msg {
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background: var(--msg-bg);
+  color: var(--msg-text);
+}
+
+/* ===============================
+   Hero Pizza Visual (from index.css)
+   =============================== */
+.hero-visual{
+  position:relative;
+  border-radius:22px;
+  min-height:260px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background: radial-gradient(600px 260px at 70% 0%, rgba(225,29,46,.18), transparent 70%),
+              linear-gradient(140deg,#ffe5ea,#fff 50%,#ffecef 100%);
+}
+
+.pizza-img{
+  width: 280px;
+  max-width: 90%;
+  height: auto;
+  filter: drop-shadow(0 18px 40px rgba(0,0,0,.18));
+  transform: rotate(-6deg);
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-8px) rotate(-6deg); }
+}
+
+/* ===============================
+   Light / Dark mode helpers
+   =============================== */
+.dark body { background: var(--bg); color: var(--text); }
+.dark .card { background: var(--card); border-color: var(--border); }
+.dark .input, .dark .select { background: var(--card); color: var(--text); border-color: var(--border); }
+.dark .btn-muted { background: var(--btn-muted-bg); color: var(--text); }
+.dark .table th, .dark .table td { border-bottom-color: var(--border); }
+
