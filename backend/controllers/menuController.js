@@ -58,18 +58,27 @@ exports.createPizza = async (req, res) => {
     const pizza = new Pizza({ name, ingredients, price, img });
     const savedPizza = await pizza.save();
 
-    // Fetch all users
-    const users = await User.find({});
-
-    // Send email notification
-    await sendNewMenuEmailToAllUsers(users, savedPizza);
-
+    // --- Respond first ---
     res.status(201).json(savedPizza);
+
+    // --- Fetch all users ---
+    // and send email notification asynchronously
+    setTimeout(async () => {
+      try {
+        const users = await User.find({});
+        // Send email notification
+        await sendNewMenuEmailToAllUsers(users, savedPizza);
+      } catch (err) {
+        console.error("Email sending failed:", err);
+      }
+    }, 0);
+    
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // Update pizza by ID
 exports.updatePizza = async (req, res) => {

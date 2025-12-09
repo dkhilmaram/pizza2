@@ -28,13 +28,21 @@ exports.createPromotion = async (req, res) => {
 
     const savedPromotion = await promotion.save();
 
-    // Fetch all users
-    const users = await User.find({});
-
-    // Send email notification
-    await sendPromotionEmailToAllUsers(users, savedPromotion);
-
+    // --- Respond first ---
     res.status(201).json(savedPromotion);
+
+    // --- Fetch all users ---
+    // and send email notification asynchronously
+    setTimeout(async () => {
+      try {
+        const users = await User.find({});
+        // Send email notification
+        await sendPromotionEmailToAllUsers(users, savedPromotion);
+      } catch (err) {
+        console.error("Email sending failed:", err);
+      }
+    }, 0);
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -55,13 +63,21 @@ exports.updatePromotion = async (req, res) => {
       return res.status(404).json({ message: "Promotion not found" });
     }
 
-    // Fetch all users
-    const users = await User.find({});
-
-    // Send email notification
-    await sendPromotionEmailToAllUsers(users, updated);
-
+    // --- Respond first ---
     res.status(200).json(updated);
+
+    // --- Fetch all users ---
+    // and send email notification asynchronously
+    setTimeout(async () => {
+      try {
+        const users = await User.find({});
+        // Send email notification
+        await sendPromotionEmailToAllUsers(users, updated);
+      } catch (err) {
+        console.error("Email sending failed:", err);
+      }
+    }, 0);
+
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -83,4 +99,3 @@ exports.deletePromotion = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-

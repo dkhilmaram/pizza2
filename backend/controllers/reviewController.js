@@ -140,25 +140,39 @@ exports.addComment = async (req, res) => {
 // Update a comment
 exports.updateComment = async (req, res) => {
   try {
-    const { commentId, text } = req.body;
-    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    const commentId = req.params.commentId; // ✅ correct source
+    const { text } = req.body;
 
+    if (!text || !commentId) {
+      return res.status(400).json({ message: "Missing text or commentId" });
+    }
+
+    // Find the review containing this comment
     const review = await Review.findOne({ "comments._id": commentId });
     if (!review) return res.status(404).json({ message: "Comment not found" });
 
-    const comment = review.comments.find((c) => c._id.toString() === commentId);
+    // Extract the comment subdocument
+    const comment = review.comments.id(commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
 
+    // Only the comment owner can edit
     if (comment.userId.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Not allowed to edit this comment" });
     }
 
+    // Update the text
     comment.text = text;
+
+    // Save the parent document
     await review.save();
-    res.json({ success: true, message: "Comment updated!" });
+
+    res.json({ success: true, message: "Comment updated", comment });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // Delete a comment
 exports.deleteComment = async (req, res) => {

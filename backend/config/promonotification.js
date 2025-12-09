@@ -22,7 +22,8 @@ const sendPromotionEmailToAllUsers = async (users, promotion) => {
     return;
   }
 
-  const subject = `🔥 New Promotion: ${promotion.name}`;
+const subject = `🔥 New Promotion: ${promotion.name.en || promotion.name}`;
+
 
   const html = `
     <div style="font-family: Arial; padding: 20px;">
