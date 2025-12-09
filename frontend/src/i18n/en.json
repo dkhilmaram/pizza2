@@ -17,7 +17,7 @@
   "customer_reviews_desc": "See what our customers think about our delicious pizzas.",
   "promotions": "Promotions",
   "promotions_desc": "Get the best deals and discounts on your orders.",
-  "menu": "Menu",
+  
   "menu_desc": "Browse our menu and discover your favorite pizzas.",
   "see_more": "See More",
  
@@ -26,7 +26,7 @@
   "email_address": "Email Address",
   "phone_number": "Phone Number",
   "full_address": "Full Address",
-  "city": "City",
+ 
   "password": "Password",
   "confirm_password": "Confirm Password",
   "fill_required_fields": "Please fill all required fields.",
@@ -59,10 +59,9 @@
   
   "my_profile": "My Profile",
   "name": "Name",
-  "email": "Email",
+ 
   "bio": "Bio / Caption",
-  "phone": "Phone",
-  "address": "Address",
+
 
   "dob": "Date of Birth",
   "gender": "Gender",
@@ -92,7 +91,7 @@
   "select_gender": "Select Gender",
  
   
-  "admin": "Admin",
+
   "add_user": "Add User",
   "search_users": "Search users...",
   "actions": "Actions",
@@ -101,12 +100,12 @@
   "orders": "Orders",
   "order_id": "Order ID",
   "items": "Items",
-  "total": "Total",
+
   "date": "Date",
   "loading_orders": "Loading orders...",
   "no_orders_found": "No orders found.",
   "edit_role": "Edit Role",
-  "delete": "Delete",
+ 
   "protected_account": "Protected Account",
   "user": "User",
   "start": "Start",
@@ -295,12 +294,11 @@
   },
 "admin manage Pizzas": "Admin — Manage Pizzas",
   "edit Pizza": "Edit Pizza",
-  "add Pizza": "Add Pizza",
-  "save Changes": "Save Changes",
+ 
   "preview ": "Preview",
   "no Image": "No image",
   "loading.pizzas": "Loading pizzas...",
-  "edit": "Edit",
+
   "delete": "Delete",
   "error.fetchPizzas": "Failed to fetch pizzas. Check backend URL or server.",
   "error.deletePizza": "Failed to delete pizza.",
@@ -325,7 +323,7 @@
   "coupon_applied_percent": "Coupon  applied: {{discount}}% off!",
   "coupon_applied_free_shipping": "Coupon  applied: Free Shipping!",
   "invalid_coupon": "Invalid coupon code.",
-  "total": "Total",
+
   "checkout": "Checkout",
   "custom_pizza": "Create Custom Pizza",
   "orderSuccess": {
@@ -383,7 +381,14 @@
     "No order found. Please place an order first.": "No order found. Please place an order first.",
     "Current Status": "Current Status",
     "Your order has been delivered! Enjoy your meal!": "Your order has been delivered! Enjoy your meal!",
-    "Back to Home": "Back to Home"
+    "Back to Home": "Back to Home",
+    "favorites": "Favorites",
+  "noFavoritesYet": "You have no favorite items yet.",
+  "browseMenu": "Browse Menu",
+   "somber": "Light",
+  "clair": "Dark",
+   "favorite list": "Favorites"
+
   
 
 }

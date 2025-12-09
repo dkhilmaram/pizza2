@@ -27,7 +27,7 @@
   "email_address": "البريد الإلكتروني",
   "phone_number": "رقم الهاتف",
   "full_address": "العنوان الكامل",
-  "city": "المدينة",
+
   "password": "كلمة المرور",
   "confirm_password": "تأكيد كلمة المرور",
  
@@ -56,10 +56,9 @@
   "back_to_login": "العودة لتسجيل الدخول",
   "my_profile": "ملفي الشخصي",
   "name": "الاسم",
-  "email": "البريد الإلكتروني",
+
   "bio": "نبذة عنك",
-  "phone": "رقم الهاتف",
-  "address": "العنوان",
+
 
   "dob": "تاريخ الميلاد",
   "gender": "الجنس",
@@ -89,7 +88,7 @@
   "select_gender": "اختر الجنس",
 
   "user": "مستخدم",
-  "admin": "مشرف",
+
   "add_user": "إضافة المستخدم",
   "search_users": "بحث عن مستخدمين...",
   "actions": "الإجراءات",
@@ -98,7 +97,7 @@
   "orders": "الطلبات",
   "order_id": "معرف الطلب",
   "items": "العناصر",
-  "total": "الإجمالي",
+
   "date": "التاريخ",
   "loading_orders": "جارٍ تحميل الطلبات...",
   "no_orders_found": "لا توجد طلبات.",
@@ -180,7 +179,7 @@
     "comments": "التعليقات",
     "write_a_comment": "اكتب تعليقًا...",
     "submit": "إرسال",
-    "edit": "تعديل",
+  
     "createYourPizza": "اصنع بيتزا مخصصة",
   "pizzaName": "اسم البيتزا",
   "writeYourPizzaName": "اكتب اسم البيتزا",
@@ -244,7 +243,7 @@
   "preparing": "قيد التحضير",
   "delivering": "قيد التوصيل",
   "completed": "مكتمل",
-  "canceled": "ملغى",
+ 
  "canceled": "تم الإلغاء",
 
   "admin": {
@@ -288,13 +287,12 @@
   },
 "admin manage Pizzas": "إدارة البيتزا",
   "edit Pizza": "تعديل البيتزا",
-  "add Pizza": "إضافة بيتزا",
-  "save Changes": "حفظ التغييرات",
+ 
   "preview ": "معاينة",
   "no Image": "لا توجد صورة",
   "loading.pizzas": "جاري تحميل البيتزا...",
   "edit": "تعديل",
-  "delete": "حذف",
+ 
   "error.fetchPizzas": "فشل في جلب البيتزا. تحقق من عنوان الخادم أو الاتصال.",
   "error.deletePizza": "فشل في حذف البيتزا.",
   "error.savePizza": "فشل في حفظ البيتزا.",
@@ -317,7 +315,7 @@
   "coupon_applied_percent": "تم تطبيق الرمز : خصم {{discount}}٪!",
   "coupon_applied_free_shipping": "تم تطبيق الرمز: الشحن مجاني!",
   "invalid_coupon": "رمز الخصم غير صالح.",
-  "total": "الإجمالي",
+
   "checkout": "الدفع",
   "custom_pizza": "إنشاء بيتزا مخصصة",
   "orderSuccess": {
@@ -376,7 +374,11 @@
     "No order found. Please place an order first.": "لم يتم العثور على طلب. الرجاء تقديم طلب أولاً.",
     "Current Status": "الحالة الحالية",
     "Your order has been delivered! Enjoy your meal!": "تم توصيل طلبك! استمتع بوجبتك!",
-    "Back to Home": "العودة إلى الصفحة الرئيسية"
+    "Back to Home": "العودة إلى الصفحة الرئيسية",
+     "favorites": "المفضلة",
+  "noFavoritesYet": "ليس لديك عناصر مفضلة بعد.",
+  "browseMenu": "تصفح القائمة",
+   "favorite list": "المفضلة"
 
 
 }

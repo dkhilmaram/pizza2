@@ -25,7 +25,7 @@
   "email_address": "Correo electrónico",
   "phone_number": "Número de teléfono",
   "full_address": "Dirección completa",
-  "city": "Ciudad",
+ 
   "password": "Contraseña",
   "confirm_password": "Confirmar contraseña",
   "fill_required_fields": "Por favor, completa todos los campos obligatorios.",
@@ -53,10 +53,9 @@
   
   "my_profile": "Mi perfil",
   "name": "Nombre",
-  "email": "Correo electrónico",
+
   "bio": "Biografía / Leyenda",
-  "phone": "Teléfono",
-  "address": "Dirección",
+
   "dob": "Fecha de nacimiento",
   "gender": "Género",
   "select": "Seleccionar",
@@ -81,7 +80,7 @@
   "add_new_user": "Agregar nuevo usuario",
   "select_gender": "Seleccionar género",
   "user": "Usuario",
-  "admin": "Administrador",
+
   "add_user": "Agregar usuario",
   "search_users": "Buscar usuarios...",
   "actions": "Acciones",
@@ -90,12 +89,12 @@
   "orders": "Pedidos",
   "order_id": "ID de pedido",
   "items": "Artículos",
-  "total": "Total",
+ 
   "date": "Fecha",
   "loading_orders": "Cargando pedidos...",
   "no_orders_found": "No se encontraron pedidos.",
   "edit_role": "Editar rol",
-  "delete": "Eliminar",
+ 
   "protected_account": "Cuenta protegida",
   "start": "Comenzar",
   "see my orders": "Ver mis pedidos",
@@ -173,7 +172,7 @@
     "comments": "Comentarios",
     "write_a_comment": "Escribe un comentario...",
     "submit": "Enviar",
-    "edit": "Editar",
+   
      "createYourPizza": "Crea tu pizza personalizada",
   "pizzaName": "Nombre de la pizza",
   "writeYourPizzaName": "Escribe el nombre de tu pizza",
@@ -198,7 +197,7 @@
     "pineapple": "Piña",
     "corn": "Maíz"
   },
-  "preview": "Vista previa de la pizza",
+
   "addToCart": "Añadir al carrito",
   "orChooseFromMenu": "O elige del menú clásico",
   "backToMenu": "Volver al menú clásico",
@@ -277,7 +276,7 @@
   },
   "admin manage Pizzas": "Administrar Pizzas",
   "edit Pizza": "Editar Pizza",
-  "add Pizza": "Agregar Pizza",
+  
   "Name": "Nombre",
   "Price": "Precio",
   "Ingredients": "Ingredientes",
@@ -336,7 +335,7 @@
     "summary": "Resumen",
     "subtotal": "Subtotal",
     "discount": "Descuento",
-    "total": "Total",
+  
     "confirmOrder": "Confirmar pedido",
     "processing": "Procesando...",
     "back": "Volver",
@@ -364,7 +363,11 @@
     "No order found. Please place an order first.": "No se encontró ningún pedido. Por favor, haz un pedido primero.",
     "Current Status": "Estado Actual",
     "Your order has been delivered! Enjoy your meal!": "¡Tu pedido ha sido entregado! ¡Disfruta tu comida!",
-    "Back to Home": "Volver al Inicio"
+    "Back to Home": "Volver al Inicio",
+     "favorites": "Favoritos",
+  "noFavoritesYet": "Aún no tienes elementos favoritos.",
+  "browseMenu": "Ver menú",
+   "favorite list": "Favoritos"
 
 
      

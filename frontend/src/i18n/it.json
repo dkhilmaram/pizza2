@@ -361,7 +361,12 @@
     "No order found. Please place an order first.": "Nessun ordine trovato. Effettua un ordine prima.",
     "Current Status": "Stato Attuale",
     "Your order has been delivered! Enjoy your meal!": "Il tuo ordine è stato consegnato! Buon appetito!",
-    "Back to Home": "Torna alla Home"
+    "Back to Home": "Torna alla Home",
+    
+  "favorites": "Preferiti",
+  "noFavoritesYet": "Non hai ancora nessun preferito.",
+  "browseMenu": "Vedi il menu",
+   "favorite list": "Preferiti"
   
   
 

@@ -85,7 +85,7 @@ export default function Welcome({ darkMode }) {
               </Link>
 
               <Link
-                to={user ? "/express" : "/login"}
+                to={user ? "/menu" : "/login"}
                 className="badge"
                 style={{ textDecoration: "none" }}
               >
@@ -164,3 +164,5 @@ export default function Welcome({ darkMode }) {
     </div>
   );
 }
+ 
+          

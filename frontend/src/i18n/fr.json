@@ -26,7 +26,7 @@
   "email_address": "Adresse e-mail",
   "phone_number": "Numéro de téléphone",
   "full_address": "Adresse complète",
-  "city": "Ville",
+ 
   "password": "Mot de passe",
   "confirm_password": "Confirmer le mot de passe",
  
@@ -57,8 +57,7 @@
    "my_profile": "Mon Profil",
 
   "bio": "Bio / Caption",
-  "phone": "Téléphone",
-  "address": "Adresse",
+
 
   "dob": "Date de naissance",
   "gender": "Genre",
@@ -88,7 +87,7 @@
   "select_gender": "Sélectionner le Genre",
 
   "user": "Utilisateur",
-  "admin": "Admin",
+
   "add_user": "Ajouter l'Utilisateur",
   "search_users": "Rechercher des utilisateurs...",
   "actions": "Actions",
@@ -97,12 +96,12 @@
   "orders": "Commandes",
   "order_id": "ID Commande",
   "items": "Articles",
-  "total": "Total",
+ 
   "date": "Date",
   "loading_orders": "Chargement des commandes...",
   "no_orders_found": "Aucune commande trouvée.",
   "edit_role": "Modifier le rôle",
-  "delete": "Supprimer",
+ 
   "protected_account": "Compte protégé",
  "start": "Commencer",
   "create an account": "Créer un compte",
@@ -159,7 +158,7 @@
   "box_messages": "Boîte de messages",
   "no_messages_yet": "Pas encore de messages.",
   "name": "Nom",
-  "email": "Email",
+
   "subject": "Sujet",
   "message": "Message",
   "seen": "Vu",
@@ -206,7 +205,7 @@
     "pineapple": "Ananas",
     "corn": "Maïs"
   },
-  "preview": "Aperçu de votre pizza",
+ 
   "addToCart": "Ajouter au panier",
   "orChooseFromMenu": "Ou choisir dans le menu classique",
   "backToMenu": "Retour au menu classique",
@@ -286,7 +285,7 @@
   },
    "admin manage Pizzas": "Gérer les Pizzas",
   "edit Pizza": "Modifier Pizza",
-  "add Pizza": "Ajouter Pizza",
+ 
   "Name": "Nom",
   "Price": "Prix",
   "Ingredients": "Ingrédients",
@@ -296,7 +295,7 @@
   "preview": "Aperçu",
   "no Image": "Pas d'image",
   "loading.pizzas": "Chargement des pizzas...",
-  "edit": "Modifier",
+ 
   "delete": "Supprimer",
   "confirm.delete": "Êtes-vous sûr de vouloir supprimer cette pizza ?",
   "error.fetchPizzas": "Échec de la récupération des pizzas.",
@@ -314,7 +313,7 @@
   "coupon_applied_percent": "Le code '{{code}}' est appliqué : {{discount}}% de réduction !",
   "coupon_applied_free_shipping": "Le code '{{code}}' est appliqué : livraison gratuite !",
   "invalid_coupon": "Code promo invalide.",
-  "total": "Total",
+ 
   "checkout": "Passer à la Caisse",
   "custom_pizza": "Créer une Pizza Personnalisée",
    "orderSuccess": {
@@ -374,7 +373,14 @@
     "No order found. Please place an order first.": "Aucune commande trouvée. Veuillez passer une commande d'abord.",
     "Current Status": "Statut Actuel",
     "Your order has been delivered! Enjoy your meal!": "Votre commande a été livrée ! Bon appétit !",
-    "Back to Home": "Retour à l'Accueil"
+    "Back to Home": "Retour à l'Accueil",
+     "favorites": "Favoris",
+  "noFavoritesYet": "Vous n'avez encore aucun favori.",
+  "browseMenu": "Voir le menu",
+   "light": "Clair",
+  "dark": "Sombre",
+   "favorite list": "Liste des favoris"
+ 
 
   
 }

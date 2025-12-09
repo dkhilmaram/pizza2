@@ -1,9 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 export default function CartPage() {
   const { t } = useTranslation();
+
+  // ===============================
+  // DARK MODE SYNC — Uses your navbar toggle
+  // ===============================
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const checkTheme = () => {
+      const dark = document.documentElement.classList.contains("dark");
+      setIsDark(dark);
+    };
+
+    checkTheme();
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const [cart, setCart] = useState([]);
   const [couponCode, setCouponCode] = useState("");
@@ -11,6 +32,7 @@ export default function CartPage() {
   const [message, setMessage] = useState("");
   const [promotions, setPromotions] = useState({});
 
+  // Fetch promotions
   useEffect(() => {
     const fetchPromotions = async () => {
       try {
@@ -19,7 +41,7 @@ export default function CartPage() {
           const data = await res.json();
           const promoList = Array.isArray(data) ? data : data.promotions || [];
           const promoMap = {};
-          promoList.forEach(p => {
+          promoList.forEach((p) => {
             if (p.code) promoMap[p.code.toUpperCase()] = p.discount || 0;
           });
           setPromotions(promoMap);
@@ -41,8 +63,9 @@ export default function CartPage() {
     fetchPromotions();
   }, []);
 
+  // Load cart + active coupon
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const storedCart = JSON.parse(localStorage.getItem("cart") || "[]");
     setCart(storedCart);
 
     const active = localStorage.getItem("activeCoupon");
@@ -50,16 +73,20 @@ export default function CartPage() {
       const rate = promotions[active.toUpperCase()];
       setCouponCode(active);
       setDiscount(rate);
-      setMessage(rate > 0
-        ? t("coupon_applied_percent", { code: active, discount: (rate * 100).toFixed(0) })
-        : t("coupon_applied_free_shipping")
+      setMessage(
+        rate > 0
+          ? t("coupon_applied_percent", {
+              code: active,
+              discount: (rate * 100).toFixed(0),
+            })
+          : t("coupon_applied_free_shipping")
       );
     }
   }, [promotions, t]);
 
   const updateQuantity = (id, delta) => {
-    const updated = cart.map(item =>
-      (item.id === id || item._id === id)
+    const updated = cart.map((item) =>
+      item.id === id || item._id === id
         ? { ...item, quantity: Math.max(1, (item.quantity || 1) + delta) }
         : item
     );
@@ -68,7 +95,7 @@ export default function CartPage() {
   };
 
   const removeItem = (id) => {
-    const updated = cart.filter(item => item.id !== id && item._id !== id);
+    const updated = cart.filter((item) => item.id !== id && item._id !== id);
     setCart(updated);
     localStorage.setItem("cart", JSON.stringify(updated));
   };
@@ -85,9 +112,13 @@ export default function CartPage() {
     const rate = promotions[code];
     if (rate !== undefined) {
       setDiscount(rate);
-      setMessage(rate > 0
-        ? t("coupon_applied_percent", { code, discount: (rate * 100).toFixed(0) })
-        : t("coupon_applied_free_shipping")
+      setMessage(
+        rate > 0
+          ? t("coupon_applied_percent", {
+              code,
+              discount: (rate * 100).toFixed(0),
+            })
+          : t("coupon_applied_free_shipping")
       );
       localStorage.setItem("activeCoupon", code);
     } else {
@@ -95,6 +126,7 @@ export default function CartPage() {
       setMessage(t("invalid_coupon"));
       localStorage.removeItem("activeCoupon");
     }
+    setCouponCode("");
   };
 
   const totalPrice = cart.reduce(
@@ -104,68 +136,86 @@ export default function CartPage() {
   const discountedTotal = totalPrice * (1 - discount);
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%)",
-      padding: "3rem 1.5rem",
-    }}>
-      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-        <h1 style={{
-          textAlign: "center",
-          fontSize: "3.2rem",
-          fontWeight: "900",
-          color: "#dc2626",
-          marginBottom: "1rem",
-          textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
-          letterSpacing: "-0.5px",
-        }}>
+    <div
+      className="min-h-screen"
+      style={{
+        background: isDark
+          ? "linear-gradient(135deg, #0f0a1a 0%, #1a0d2e 40%, #2d1b3a 100%)"
+          : "linear-gradient(135deg, #fff8f1 0%, #fff1e6 40%, #ffe4cc 100%)",
+        padding: "4rem 1.5rem",
+        transition: "background 0.7s ease",
+      }}
+    >
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+        
+        {/* Title */}
+        <h1
+          style={{
+            textAlign: "center",
+            fontSize: "4rem",
+            fontWeight: "900",
+            background: "linear-gradient(135deg, var(--brand), #ef4444)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            marginBottom: "1.5rem",
+            textShadow: isDark ? "0 0 50px rgba(220,38,38,0.5)" : "none",
+            letterSpacing: "-1.5px",
+          }}
+        >
           {t("your_cart")}
         </h1>
 
-        <p style={{
-          textAlign: "center",
-          fontSize: "1.2rem",
-          color: "#78350f",
-          marginBottom: "3rem",
-          fontWeight: "500",
-        }}>
+        <p
+          style={{
+            textAlign: "center",
+            fontSize: "1.5rem",
+            color: "var(--muted)",
+            marginBottom: "4rem",
+            fontWeight: "500",
+          }}
+        >
           {cart.length === 0
             ? t("cart_empty")
             : t("cart_items_count", { count: cart.length })}
         </p>
 
         {cart.length === 0 ? (
-          <div style={{
-            background: "white",
-            borderRadius: "24px",
-            padding: "4rem 2rem",
-            textAlign: "center",
-            boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
-          }}>
-            <div style={{ fontSize: "6rem", marginBottom: "1.5rem" }}>Pizza</div>
-            <p style={{ fontSize: "1.3rem", color: "#6b7280", marginBottom: "2rem" }}>
+          /* Empty Cart */
+          <div
+            style={{
+              background: "var(--card)",
+              borderRadius: "32px",
+              padding: "5rem 3rem",
+              textAlign: "center",
+              boxShadow: "0 25px 70px rgba(0,0,0,0.15)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            <div style={{ fontSize: "8rem", marginBottom: "2rem" }}>Pizza</div>
+            <p style={{ fontSize: "2rem", color: "var(--muted)", marginBottom: "3rem" }}>
               {t("cart_empty")}
             </p>
             <Link to="/menu">
-              <button style={{
-                background: "linear-gradient(135deg, #dc2626 0%, #ef4444 100%)",
-                color: "white",
-                padding: "1.2rem 2.5rem",
-                borderRadius: "50px",
-                fontSize: "1.2rem",
-                fontWeight: "700",
-                border: "none",
-                cursor: "pointer",
-                boxShadow: "0 8px 20px rgba(220,38,38,0.3)",
-                transition: "all 0.3s ease",
-              }}
+              <button
+                style={{
+                  background: "linear-gradient(135deg, var(--primary), #dc2626)",
+                  color: "white",
+                  padding: "1.5rem 4rem",
+                  borderRadius: "50px",
+                  fontSize: "1.5rem",
+                  fontWeight: "800",
+                  border: "none",
+                  cursor: "pointer",
+                  boxShadow: "0 15px 40px rgba(220,38,38,0.5)",
+                  transition: "all 0.3s ease",
+                }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                  e.currentTarget.style.boxShadow = "0 12px 30px rgba(220,38,38,0.4)";
+                  e.currentTarget.style.transform = "translateY(-6px)";
+                  e.currentTarget.style.boxShadow = "0 20px 50px rgba(220,38,38,0.6)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 8px 20px rgba(220,38,38,0.3)";
+                  e.currentTarget.style.boxShadow = "0 15px 40px rgba(220,38,38,0.5)";
                 }}
               >
                 {t("view_menu")}
@@ -174,14 +224,16 @@ export default function CartPage() {
           </div>
         ) : (
           <>
-            {/* Liste des articles */}
-            <div style={{
-              background: "white",
-              borderRadius: "24px",
-              padding: "2rem",
-              marginBottom: "2rem",
-              boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
-            }}>
+            {/* Cart Items */}
+            <div
+              style={{
+                background: "var(--card)",
+                borderRadius: "32px",
+                padding: "2.5rem",
+                marginBottom: "3rem",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.12)",
+              }}
+            >
               {cart.map((item, index) => (
                 <div
                   key={item.id || item._id}
@@ -189,138 +241,140 @@ export default function CartPage() {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    padding: "1.5rem",
-                    marginBottom: index < cart.length - 1 ? "1rem" : "0",
-                    borderBottom: index < cart.length - 1 ? "2px solid #f3f4f6" : "none",
-                    borderRadius: "16px",
-                    transition: "all 0.3s ease",
+                    padding: "2rem",
+                    marginBottom: index < cart.length - 1 ? "2rem" : "0",
+                    borderBottom: index < cart.length - 1 ? "2px solid var(--border)" : "none",
+                    borderRadius: "20px",
+                    transition: "all 0.4s ease",
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.background = "#fef3c7"}
-                  onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--nav-active-bg)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                 >
                   <div style={{ flex: 1 }}>
-                    <h2 style={{
-                      fontSize: "1.5rem",
-                      fontWeight: "700",
-                      color: "#1f2937",
-                      marginBottom: "0.5rem",
-                    }}>
+                    <h2
+                      style={{
+                        fontSize: "2rem",
+                        fontWeight: "800",
+                        color: "var(--text)",
+                        marginBottom: "0.8rem",
+                      }}
+                    >
                       {item.name}
                     </h2>
                     {item.description && (
-                      <p style={{ color: "#6b7280", fontSize: "1rem", marginBottom: "0.5rem" }}>
+                      <p style={{ color: "var(--muted)", fontSize: "1.2rem", marginBottom: "1rem" }}>
                         {item.description}
                       </p>
                     )}
-                    <p style={{
-                      fontSize: "1.3rem",
-                      fontWeight: "700",
-                      color: "#dc2626",
-                    }}>
+                    <p
+                      style={{
+                        fontSize: "1.8rem",
+                        fontWeight: "900",
+                        color: "var(--brand)",
+                      }}
+                    >
                       {parseFloat(item.price || 0).toFixed(2)} €
                     </p>
                   </div>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                    {/* Quantité */}
-                    <div style={{
-                      display: "flex",
-                      alignItems: "center",
-                      background: "#f9fafb",
-                      borderRadius: "50px",
-                      padding: "0.5rem",
-                      border: "2px solid #e5e7eb",
-                    }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
+                    {/* Quantity */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        background: "var(--btn-muted-bg)",
+                        borderRadius: "50px",
+                        padding: "0.8rem",
+                        border: "3px solid var(--border)",
+                        boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+                      }}
+                    >
                       <button
                         onClick={() => updateQuantity(item.id || item._id, -1)}
                         style={{
-                          width: "40px",
-                          height: "40px",
+                          width: "56px",
+                          height: "56px",
                           borderRadius: "50%",
+                          background: "var(--card)",
+                          color: "var(--brand)",
                           border: "none",
-                          background: "white",
-                          color: "#dc2626",
-                          fontSize: "1.5rem",
-                          fontWeight: "700",
+                          fontSize: "2rem",
+                          fontWeight: "bold",
                           cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          transition: "all 0.3s ease",
-                          boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                          transition: "all 0.3s",
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "#dc2626";
+                          e.currentTarget.style.background = "var(--brand)";
                           e.currentTarget.style.color = "white";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.background = "white";
-                          e.currentTarget.style.color = "#dc2626";
+                          e.currentTarget.style.background = "var(--card)";
+                          e.currentTarget.style.color = "var(--brand)";
                         }}
                       >
                         −
                       </button>
-                      <span style={{
-                        margin: "0 1.5rem",
-                        fontSize: "1.3rem",
-                        fontWeight: "700",
-                        color: "#1f2937",
-                        minWidth: "30px",
-                        textAlign: "center",
-                      }}>
+                      <span
+                        style={{
+                          margin: "0 2.5rem",
+                          fontSize: "1.8rem",
+                          fontWeight: "900",
+                          color: "var(--text)",
+                          minWidth: "50px",
+                          textAlign: "center",
+                        }}
+                      >
                         {item.quantity || 1}
                       </span>
                       <button
                         onClick={() => updateQuantity(item.id || item._id, 1)}
                         style={{
-                          width: "40px",
-                          height: "40px",
+                          width: "56px",
+                          height: "56px",
                           borderRadius: "50%",
+                          background: "var(--card)",
+                          color: "var(--brand)",
                           border: "none",
-                          background: "white",
-                          color: "#dc2626",
-                          fontSize: "1.5rem",
-                          fontWeight: "700",
+                          fontSize: "2rem",
+                          fontWeight: "bold",
                           cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          transition: "all 0.3s ease",
-                          boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                          transition: "all 0.3s",
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.background = "#dc2626";
+                          e.currentTarget.style.background = "var(--brand)";
                           e.currentTarget.style.color = "white";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.background = "white";
-                          e.currentTarget.style.color = "#dc2626";
+                          e.currentTarget.style.background = "var(--card)";
+                          e.currentTarget.style.color = "var(--brand)";
                         }}
                       >
                         +
                       </button>
                     </div>
 
-                    {/* Supprimer */}
+                    {/* Remove */}
                     <button
                       onClick={() => removeItem(item.id || item._id)}
                       style={{
-                        padding: "0.8rem 1.5rem",
-                        borderRadius: "12px",
-                        border: "2px solid #fee2e2",
-                        background: "white",
-                        color: "#dc2626",
-                        fontWeight: "600",
+                        padding: "1.2rem 2.5rem",
+                        borderRadius: "16px",
+                        background: "var(--card)",
+                        color: "var(--brand)",
+                        border: `3px solid ${isDark ? "#ff6b6b" : "#fee2e2"}`,
+                        fontWeight: "700",
+                        fontSize: "1.1rem",
                         cursor: "pointer",
-                        transition: "all 0.3s ease",
+                        transition: "all 0.3s",
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "#dc2626";
+                        e.currentTarget.style.background = "var(--brand)";
                         e.currentTarget.style.color = "white";
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "white";
-                        e.currentTarget.style.color = "#dc2626";
+                        e.currentTarget.style.background = "var(--card)";
+                        e.currentTarget.style.color = "var(--brand)";
                       }}
                     >
                       {t("remove")}
@@ -331,62 +385,69 @@ export default function CartPage() {
             </div>
 
             {/* Coupon + Total */}
-            <div style={{
-              background: "white",
-              borderRadius: "24px",
-              padding: "2rem",
-              boxShadow: "0 10px 40px rgba(0,0,0,0.08)",
-            }}>
-              <div style={{ marginBottom: "2rem" }}>
-                <label style={{
-                  display: "block",
-                  fontSize: "1.2rem",
-                  fontWeight: "700",
-                  marginBottom: "1rem",
-                  color: "#1f2937",
-                }}>
+            <div
+              style={{
+                background: "var(--card)",
+                borderRadius: "32px",
+                padding: "3rem",
+                boxShadow: "0 25px 70px rgba(0,0,0,0.15)",
+              }}
+            >
+              {/* Coupon */}
+              <div style={{ marginBottom: "3rem" }}>
+                <label
+                  style={{
+                    display: "block",
+                    fontSize: "1.8rem",
+                    fontWeight: "800",
+                    marginBottom: "1.5rem",
+                    color: "var(--text)",
+                  }}
+                >
                   {t("coupon_code")}
                 </label>
-                <div style={{ display: "flex", gap: "1rem" }}>
+                <div style={{ display: "flex", gap: "1.5rem" }}>
                   <input
+                    type="text"
                     placeholder={t("enter_coupon")}
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
                     style={{
                       flex: 1,
-                      padding: "1.2rem",
-                      borderRadius: "14px",
-                      border: "2px solid #e5e7eb",
-                      fontSize: "1.1rem",
-                      background: "#f9fafb",
-                      color: "#1f2937",
+                      padding: "1.5rem",
+                      borderRadius: "20px",
+                      border: "3px solid var(--border)",
+                      background: "var(--btn-muted-bg)",
+                      color: "var(--text)",
+                      fontSize: "1.3rem",
                       fontWeight: "600",
+                      outline: "none",
                       transition: "all 0.3s ease",
                     }}
-                    onFocus={(e) => e.target.style.borderColor = "#dc2626"}
-                    onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
+                    onFocus={(e) => (e.target.style.borderColor = "var(--brand)")}
+                    onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
                   />
                   <button
                     onClick={applyCoupon}
                     style={{
-                      padding: "1.2rem 2rem",
-                      borderRadius: "14px",
-                      border: "none",
-                      background: "linear-gradient(135deg, #dc2626 0%, #ef4444 100%)",
+                      padding: "1.5rem 3.5rem",
+                      borderRadius: "20px",
+                      background: "linear-gradient(135deg, var(--primary), #dc2626)",
                       color: "white",
-                      fontWeight: "700",
-                      fontSize: "1.1rem",
+                      border: "none",
+                      fontWeight: "800",
+                      fontSize: "1.3rem",
                       cursor: "pointer",
-                      transition: "all 0.3s ease",
-                      boxShadow: "0 4px 12px rgba(220,38,38,0.3)",
+                      boxShadow: "0 10px 30px rgba(220,38,38,0.5)",
+                      transition: "all 0.3s",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-2px)";
-                      e.currentTarget.style.boxShadow = "0 6px 20px rgba(220,38,38,0.4)";
+                      e.currentTarget.style.transform = "translateY(-5px)";
+                      e.currentTarget.style.boxShadow = "0 15px 40px rgba(220,38,38,0.6)";
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = "translateY(0)";
-                      e.currentTarget.style.boxShadow = "0 4px 12px rgba(220,38,38,0.3)";
+                      e.currentTarget.style.boxShadow = "0 10px 30px rgba(220,38,38,0.5)";
                     }}
                   >
                     {t("apply")}
@@ -394,61 +455,71 @@ export default function CartPage() {
                 </div>
 
                 {message && (
-                  <p style={{
-                    marginTop: "1rem",
-                    padding: "1rem",
-                    borderRadius: "12px",
-                    background: message.includes("invalide") || message.includes("Invalid") ? "#fee2e2" : "#dcfce7",
-                    color: message.includes("invalide") || message.includes("Invalid") ? "#dc2626" : "#16a34a",
-                    fontWeight: "600",
-                  }}>
-                    {message.includes("invalide") || message.includes("Invalid") ? "❌" : "✅"} {message}
-                  </p>
+                  <div
+                    style={{
+                      marginTop: "1.5rem",
+                      padding: "1.5rem",
+                      borderRadius: "16px",
+                      background: message.includes("invalide") ? "rgba(254,226,226,0.9)" : "rgba(220,252,231,0.9)",
+                      color: message.includes("invalide") ? "#dc2626" : "#166534",
+                      fontWeight: "700",
+                      textAlign: "center",
+                      fontSize: "1.2rem",
+                    }}
+                  >
+                    {message.includes("invalide") ? "Error" : "Success"} {message}
+                  </div>
                 )}
               </div>
 
               {/* Total */}
-              <div style={{ borderTop: "2px solid #f3f4f6", paddingTop: "2rem" }}>
-                <div style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "1.5rem",
-                }}>
-                  <span style={{ fontSize: "1.5rem", fontWeight: "700", color: "#1f2937" }}>
+              <div style={{ borderTop: "3px solid var(--border)", paddingTop: "3rem" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "3rem",
+                  }}
+                >
+                  <span style={{ fontSize: "2.2rem", fontWeight: "800", color: "var(--text)" }}>
                     {t("total")} :
                   </span>
-                  <div>
+                  <div style={{ textAlign: "right" }}>
                     {discount > 0 ? (
-                      <div style={{ textAlign: "right" }}>
-                        <span style={{
-                          textDecoration: "line-through",
-                          color: "#9ca3af",
-                          fontSize: "1.3rem",
-                          marginRight: "1rem",
-                        }}>
+                      <>
+                        <span
+                          style={{
+                            textDecoration: "line-through",
+                            color: "var(--muted)",
+                            fontSize: "1.8rem",
+                            marginRight: "1.5rem",
+                          }}
+                        >
                           {totalPrice.toFixed(2)} €
                         </span>
-                        <span style={{
-                          fontSize: "2.5rem",
-                          fontWeight: "900",
-                          background: "linear-gradient(135deg, #dc2626 0%, #ef4444 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                          backgroundClip: "text",
-                        }}>
+                        <span
+                          style={{
+                            fontSize: "4rem",
+                            fontWeight: "900",
+                            background: "linear-gradient(135deg, var(--brand), #ef4444)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                          }}
+                        >
                           {discountedTotal.toFixed(2)} €
                         </span>
-                      </div>
+                      </>
                     ) : (
-                      <span style={{
-                        fontSize: "2.5rem",
-                        fontWeight: "900",
-                        background: "linear-gradient(135deg, #dc2626 0%, #ef4444 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
-                      }}>
+                      <span
+                        style={{
+                          fontSize: "4rem",
+                          fontWeight: "900",
+                          background: "linear-gradient(135deg, var(--brand), #ef4444)",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                        }}
+                      >
                         {totalPrice.toFixed(2)} €
                       </span>
                     )}
@@ -459,59 +530,56 @@ export default function CartPage() {
                   <button
                     style={{
                       width: "100%",
-                      background: "linear-gradient(135deg, #dc2626 0%, #ef4444 100%)",
+                      background: "linear-gradient(135deg, var(--primary), #dc2626)",
                       color: "white",
-                      padding: "1.5rem",
-                      borderRadius: "16px",
-                      fontSize: "1.3rem",
-                      fontWeight: "800",
+                      padding: "2rem",
+                      borderRadius: "24px",
+                      fontSize: "2rem",
+                      fontWeight: "900",
                       border: "none",
                       cursor: "pointer",
-                      boxShadow: "0 10px 25px rgba(220,38,38,0.4)",
-                      transition: "all 0.3s ease",
+                      boxShadow: "0 20px 50px rgba(220,38,38,0.5)",
+                      transition: "all 0.4s ease",
                       textTransform: "uppercase",
-                      letterSpacing: "0.5px",
-                      marginBottom: "1rem",
+                      letterSpacing: "2px",
+                      marginBottom: "2rem",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-2px)";
-                      e.currentTarget.style.boxShadow = "0 15px 35px rgba(220,38,38,0.5)";
+                      e.currentTarget.style.transform = "translateY(-8px)";
+                      e.currentTarget.style.boxShadow = "0 30px 60px rgba(220,38,38,0.7)";
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = "translateY(0)";
-                      e.currentTarget.style.boxShadow = "0 10px 25px rgba(220,38,38,0.4)";
+                      e.currentTarget.style.boxShadow = "0 20px 50px rgba(220,38,38,0.5)";
                     }}
                   >
                     {t("checkout")}
                   </button>
                 </Link>
-                
 
                 <Link to="/pizza">
-                  <button style={{
-                    width: "100%",
-                    background: "white",
-                    color: "#dc2626",
-                    padding: "1.2rem",
-                    borderRadius: "16px",
-                    fontSize: "1.1rem",
-                    fontWeight: "700",
-                    border: "2px solid #dc2626",
-                    cursor: "pointer",
-                    transition: "all 0.3s ease",
-                    boxShadow: "0 4px 12px rgba(220,38,38,0.1)",
-                  }}
+                  <button
+                    style={{
+                      width: "100%",
+                      background: "var(--card)",
+                      color: "var(--brand)",
+                      padding: "1.8rem",
+                      borderRadius: "24px",
+                      fontSize: "1.5rem",
+                      fontWeight: "800",
+                      border: "3px solid var(--brand)",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                    }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "#dc2626";
+                      e.currentTarget.style.background = "var(--brand)";
                       e.currentTarget.style.color = "white";
-                      e.currentTarget.style.transform = "translateY(-2px)";
-                      e.currentTarget.style.boxShadow = "0 8px 20px rgba(220,38,38,0.3)";
+                      e.currentTarget.style.transform = "translateY(-5px)";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "white";
-                      e.currentTarget.style.color = "#dc2626";
+                      e.currentTarget.style.background = "var(--card)";
+                      e.currentTarget.style.color = "var(--brand)";
                       e.currentTarget.style.transform = "translateY(0)";
-                      e.currentTarget.style.boxShadow = "0 4px 12px rgba(220,38,38,0.1)";
                     }}
                   >
                     {t("custom_pizza")}
