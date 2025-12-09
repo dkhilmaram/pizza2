@@ -34,6 +34,9 @@ export default function Reviews() {
     if (token) fetchUserRating();
   }, []);
 
+  // Helper to clean names (removes empty parentheses)
+  const cleanName = (name) => name ? name.replace(/\s*\(\s*\)/g, "") : "";
+
   // ================= Ratings =================
   const fetchRatings = async () => {
     try {
@@ -96,15 +99,21 @@ export default function Reviews() {
     if (!commentText.trim()) return alert("Comment cannot be empty");
 
     try {
-      const url = "http://localhost:5000/api/reviews/comments";
+      const url = editingId
+        ? `http://localhost:5000/api/reviews/comments/${editingId}`
+        : "http://localhost:5000/api/reviews/comments";
+
       const method = editingId ? "PUT" : "POST";
-      const body = editingId ? { commentId: editingId, text: commentText } : { text: commentText };
 
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text: commentText }),
       });
+
       const data = await res.json();
       if (data.success) {
         setCommentText("");
@@ -165,8 +174,26 @@ export default function Reviews() {
   };
 
   // ================= Styles =================
-  const containerStyle = { padding: "40px 20px", maxWidth: "900px", margin: "0 auto", borderRadius: "12px", backgroundColor: "var(--card)", color: "var(--text)", direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left" };
-  const buttonStyle = { marginTop: 10, padding: "8px 15px", borderRadius: 8, fontWeight: "bold", border: "none", cursor: "pointer", backgroundColor: "var(--primary)", color: "var(--text)" };
+  const containerStyle = {
+    padding: "40px 20px",
+    maxWidth: "900px",
+    margin: "0 auto",
+    borderRadius: "12px",
+    backgroundColor: "var(--card)",
+    color: "var(--text)",
+    direction: isRTL ? "rtl" : "ltr",
+    textAlign: isRTL ? "right" : "left"
+  };
+  const buttonStyle = {
+    marginTop: 10,
+    padding: "8px 15px",
+    borderRadius: 8,
+    fontWeight: "bold",
+    border: "none",
+    cursor: "pointer",
+    backgroundColor: "var(--primary)",
+    color: "var(--text)"
+  };
   const numberStyle = { width: 35, fontSize: 16, fontWeight: "bold", textAlign: "right" };
 
   // ================= Render =================
@@ -178,9 +205,13 @@ export default function Reviews() {
       {successMsg && <div style={{ background: "var(--success-bg)", padding: "10px 15px", borderRadius: 8, marginBottom: 15, color: "var(--success-text)", fontWeight: "bold" }}>{successMsg}</div>}
 
       {/* Rating stars */}
-      <div style={{ marginBottom: 15 }}><strong>{t("ratings_average")}: {average} / 5 — {totalRaters === 1 ? t("ratings_rated_by_one") : t("ratings_rated_by_other", { count: totalRaters })}</strong></div>
+      <div style={{ marginBottom: 15 }}>
+        <strong>{t("ratings_average")}: {average} / 5 — {totalRaters === 1 ? t("ratings_rated_by_one") : t("ratings_rated_by_other", { count: totalRaters })}</strong>
+      </div>
       <div style={{ fontSize: 32, marginBottom: 10, display: "flex", justifyContent: isRTL ? "flex-end" : "flex-start" }}>
-        {[1,2,3,4,5].map(n => <span key={n} style={{ cursor: "pointer", color: n <= rating ? "gold" : "#bbb", margin: "0 2px" }} onClick={() => setRating(n)}>★</span>)}
+        {[1,2,3,4,5].map(n => (
+          <span key={n} style={{ cursor: "pointer", color: n <= rating ? "gold" : "#bbb", margin: "0 2px" }} onClick={() => setRating(n)}>★</span>
+        ))}
       </div>
       <button onClick={submitRating} style={buttonStyle}>{t("submit_rate")}</button>
 
@@ -203,7 +234,12 @@ export default function Reviews() {
       {/* Comments */}
       <div style={{ marginTop: 40 }}>
         <h2 style={{ textAlign: "center" }}>{t("comments") || "Comments"}</h2>
-        <textarea value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder={t("write_a_comment") || "Write a comment..."} style={{ width: "100%", minHeight: 60, marginTop: 10, padding: 8, borderRadius: 6 }} />
+        <textarea
+          value={commentText}
+          onChange={(e) => setCommentText(e.target.value)}
+          placeholder={t("write_a_comment") || "Write a comment..."}
+          style={{ width: "100%", minHeight: 60, marginTop: 10, padding: 8, borderRadius: 6 }}
+        />
         <button onClick={submitComment} style={buttonStyle}>{editingId ? t("edit") || "Edit" : t("submit") || "Submit"}</button>
 
         <div style={{ marginTop: 20 }}>
@@ -214,7 +250,8 @@ export default function Reviews() {
             return (
               <div key={c._id} style={{ borderBottom: "1px solid #ccc", padding: "10px 0", display: "flex", flexDirection: isRTL ? "row-reverse" : "row", gap: 10, justifyContent: "space-between" }}>
                 <div style={{ flex: 1 }}>
-                  <strong>{c.name}</strong> {currentUserRole === "admin" || isOwner ? `(${c.emailMasked})` : ""}
+                  <strong>{cleanName(c.name)}</strong>
+                  {(currentUserRole === "admin" || isOwner) && c.emailMasked ? ` ${c.emailMasked}` : ""}
                   <p style={{ margin: "4px 0" }}>{c.text}</p>
 
                   {isOwner && (
@@ -228,7 +265,7 @@ export default function Reviews() {
                     <div style={{ marginTop: 6, paddingLeft: isRTL ? 0 : 16, paddingRight: isRTL ? 16 : 0 }}>
                       {c.replies.map(r => (
                         <div key={r._id} style={{ borderLeft: "2px solid var(--primary)", paddingLeft: 8, marginBottom: 4 }}>
-                          <strong>{r.adminName || r.userName}</strong>: {r.text}
+                          <strong>{cleanName(r.adminName) || r.userName}</strong>: {r.text}
                         </div>
                       ))}
                     </div>

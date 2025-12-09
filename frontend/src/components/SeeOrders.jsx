@@ -14,14 +14,10 @@ export default function SeeOrders({ darkMode }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
 
-// Dark mode
-
+  // Toggle dark class on body
   useEffect(() => {
-    if (darkMode) document.body.classList.add("dark");
-    else document.body.classList.remove("dark");
+    document.body.classList.toggle("dark", darkMode);
   }, [darkMode]);
-
-
 
   // Load orders
   const loadOrders = async () => {
@@ -79,11 +75,7 @@ export default function SeeOrders({ darkMode }) {
 
   // Dashboard numbers
   const totalOrders = orders.length;
-
-  const totalCustomers = new Set(
-    orders.map((o) => o.user?._id)
-  ).size;
-
+  const totalCustomers = new Set(orders.map((o) => o.user?._id)).size;
   const totalIncome = orders.reduce((sum, o) => sum + o.totalPrice, 0);
 
   // Update status
@@ -103,7 +95,7 @@ export default function SeeOrders({ darkMode }) {
     }
   };
 
-  // Badge color
+  // Badge color for status
   const getStatusColor = (status) => {
     switch (status) {
       case "pending": return "#FFA500";
@@ -125,7 +117,7 @@ export default function SeeOrders({ darkMode }) {
         padding: "20px",
       }}
     >
-      <h2 style={{ fontWeight: 800, marginBottom: 20 }}>
+      <h2 style={{ fontWeight: 800, marginBottom: 20, color: "var(--text)" }}>
         {t("order dashboard")}
       </h2>
 
@@ -138,59 +130,29 @@ export default function SeeOrders({ darkMode }) {
           flexWrap: "wrap",
         }}
       >
-        {/* Total Orders */}
-        <div
-          style={{
-            flex: "1",
-            minWidth: "200px",
-            background: "#ffffff",
-            padding: "20px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-            textAlign: "center",
-          }}
-        >
-          <h3 style={{ margin: 0, fontWeight: 700 }}>{t("total_orders")}</h3>
-          <p style={{ fontSize: "24px", fontWeight: "bold", marginTop: "10px" }}>
-            {totalOrders}
-          </p>
-        </div>
-
-        {/* Total Customers */}
-        <div
-          style={{
-            flex: "1",
-            minWidth: "200px",
-            background: "#ffffff",
-            padding: "20px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-            textAlign: "center",
-          }}
-        >
-          <h3 style={{ margin: 0, fontWeight: 700 }}>{t("total_customers")}</h3>
-          <p style={{ fontSize: "24px", fontWeight: "bold", marginTop: "10px" }}>
-            {totalCustomers}
-          </p>
-        </div>
-
-        {/* Total Income */}
-        <div
-          style={{
-            flex: "1",
-            minWidth: "200px",
-            background: "#ffffff",
-            padding: "20px",
-            borderRadius: "12px",
-            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-            textAlign: "center",
-          }}
-        >
-          <h3 style={{ margin: 0, fontWeight: 700 }}>{t("total_income")}</h3>
-          <p style={{ fontSize: "24px", fontWeight: "bold", marginTop: "10px" }}>
-            ${totalIncome.toFixed(2)}
-          </p>
-        </div>
+        {[
+          { label: t("total_orders"), value: totalOrders },
+          { label: t("total_customers"), value: totalCustomers },
+          { label: t("total_income"), value: `$${totalIncome.toFixed(2)}` },
+        ].map((card, i) => (
+          <div
+            key={i}
+            style={{
+              flex: "1",
+              minWidth: "200px",
+              background: "var(--card)",
+              padding: "20px",
+              borderRadius: "12px",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+              textAlign: "center",
+            }}
+          >
+            <h3 style={{ margin: 0, fontWeight: 700, color: "var(--text)" }}>{card.label}</h3>
+            <p style={{ fontSize: "24px", fontWeight: "bold", marginTop: "10px", color: "var(--text)" }}>
+              {card.value}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* Delete modal */}
@@ -206,48 +168,26 @@ export default function SeeOrders({ darkMode }) {
       {message && <div className="msg">{message}</div>}
 
       {/* Orders table */}
-      <div
-        style={{
-          width: "100%",
-          height: "calc(100vh - 150px)",
-          overflow: "auto",
-        }}
-      >
-        <table
-          className="table"
-          style={{
-            width: "100%",
-            tableLayout: "auto",
-            minWidth: "1000px",
-          }}
-        >
+      <div style={{ width: "100%", height: "calc(100vh - 150px)", overflow: "auto" }}>
+        <table className="table" style={{ width: "100%", tableLayout: "auto", minWidth: "1000px" }}>
           <thead>
             <tr>
-              <th>{t("order_id")}</th>
-              <th>{t("user")}</th>
-              <th>{t("items")}</th>
-              <th>{t("total_price")}</th>
-              <th>{t("status")}</th>
-              <th>{t("actions")}</th>
+              {["order_id", "user", "items", "total_price", "status", "actions"].map((key) => (
+                <th key={key}>{t(key)}</th>
+              ))}
             </tr>
           </thead>
 
           <tbody>
             {loadingOrders ? (
               <tr>
-                <td colSpan="6" style={{ textAlign: "center" }}>
-                  {t("loading_orders")}
-                </td>
+                <td colSpan="6" style={{ textAlign: "center" }}>{t("loading_orders")}</td>
               </tr>
             ) : orders.length > 0 ? (
               orders.map((order) => (
                 <tr key={order._id}>
                   <td>{order._id.slice(0, 8)}</td>
-
-                  <td>
-                    {order.user?.name} ({order.user?.email})
-                  </td>
-
+                  <td>{order.user?.name} ({order.user?.email})</td>
                   <td>
                     {order.items.map((item) => (
                       <div key={item._id}>
@@ -255,17 +195,9 @@ export default function SeeOrders({ darkMode }) {
                       </div>
                     ))}
                   </td>
-
                   <td>{order.totalPrice.toFixed(2)}</td>
-
                   <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                      }}
-                    >
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                       <span
                         style={{
                           width: "12px",
@@ -275,32 +207,20 @@ export default function SeeOrders({ darkMode }) {
                           display: "inline-block",
                         }}
                       ></span>
-
                       <select
                         value={order.status}
-                        onChange={(e) =>
-                          handleStatusChange(order._id, e.target.value)
-                        }
+                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
                         className="select"
-                        style={{
-                          color: getStatusColor(order.status),
-                          fontWeight: "bold",
-                        }}
+                        style={{ color: getStatusColor(order.status), fontWeight: "bold" }}
                       >
-                        <option value="pending">{t("pending")}</option>
-                        <option value="preparing">{t("preparing")}</option>
-                        <option value="delivering">{t("delivering")}</option>
-                        <option value="completed">{t("completed")}</option>
-                        <option value="canceled">{t("canceled")}</option>
+                        {["pending","preparing","delivering","completed","canceled"].map((s) => (
+                          <option key={s} value={s}>{t(s)}</option>
+                        ))}
                       </select>
                     </div>
                   </td>
-
                   <td>
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => handleAskDelete(order._id)}
-                    >
+                    <button className="btn btn-primary" onClick={() => handleAskDelete(order._id)}>
                       {t("delete")}
                     </button>
                   </td>
@@ -308,9 +228,7 @@ export default function SeeOrders({ darkMode }) {
               ))
             ) : (
               <tr>
-                <td colSpan="6" style={{ textAlign: "center" }}>
-                  {t("no_orders_found")}
-                </td>
+                <td colSpan="6" style={{ textAlign: "center" }}>{t("no_orders_found")}</td>
               </tr>
             )}
           </tbody>

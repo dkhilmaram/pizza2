@@ -24,6 +24,8 @@ import AdminMenu from "./components/adminmenu";
 import OrderConfirmationPage from "./components/OrderConfirmationPage"; 
 import OrderSuccessPage from "./components/OrderSuccessPage"; 
 import TrackOrderPage from "./components/TrackOrderPage"; 
+import Favorites from "./components/favorites";
+
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -167,6 +169,14 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+  path="/favorites"
+  element={
+    <ProtectedRoute>
+      <Favorites darkMode={darkMode} />
+    </ProtectedRoute>
+  }
+/>
 
           {/* Public pages */}
           <Route path="/reviews" element={<Reviews darkMode={darkMode} />} />

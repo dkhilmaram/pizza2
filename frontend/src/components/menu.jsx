@@ -46,6 +46,23 @@ const MenuPage = () => {
     localStorage.setItem("cart", JSON.stringify(cart));
     navigate("/cart");
   };
+const addToFavorites = (pizza) => {
+  const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+  favorites.push({
+    id: Date.now(),
+    name: pizza.name,
+    price: parseFloat(pizza.price),
+    details: pizza.ingredients,
+    img: pizza.img,
+  });
+
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  navigate("/favorites");
+};
+
+
+
 
   if (loading) return <p style={{ textAlign: "center" }}>Loading pizzas...</p>;
   if (error) return <p style={{ textAlign: "center", color: "red" }}>{error}</p>;
@@ -100,25 +117,44 @@ const MenuPage = () => {
                 {t(pizza.ingredients)}
               </p>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontSize: "1.8rem", fontWeight: "bold", color: "#dc2626" }}>
-                  {parseFloat(pizza.price).toFixed(2)} €
-                </span>
-                <button
-                  style={{
-                    background: "#dc2626",
-                    color: "white",
-                    border: "none",
-                    padding: "12px 24px",
-                    borderRadius: "50px",
-                    fontWeight: "bold",
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                  }}
-                  onClick={() => addToCart(pizza)}
-                >
-                  {t("add")}
-                </button>
-              </div>
+  <span style={{ fontSize: "1.8rem", fontWeight: "bold", color: "#dc2626" }}>
+    {parseFloat(pizza.price).toFixed(2)} €
+  </span>
+
+  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+    {/* Heart button for Favorites */}
+    <button
+      onClick={() => addToFavorites(pizza)}
+      style={{
+        background: "transparent",
+        border: "none",
+        cursor: "pointer",
+        fontSize: "1.8rem",
+        color: "#dc2626",
+      }}
+    >
+      ❤️
+    </button>
+
+    {/* Add to Cart button */}
+    <button
+      style={{
+        background: "#dc2626",
+        color: "white",
+        border: "none",
+        padding: "12px 24px",
+        borderRadius: "50px",
+        fontWeight: "bold",
+        cursor: "pointer",
+        transition: "all 0.3s",
+      }}
+      onClick={() => addToCart(pizza)}
+    >
+      {t("add")}
+    </button>
+  </div>
+</div>
+
             </div>
           </div>
         ))}
@@ -140,6 +176,23 @@ const MenuPage = () => {
         >
           {t("create custom pizza")}
         </Link>
+        <div style={{ textAlign: "center", marginTop: "2rem" }}>
+  <Link
+    to="/favorites"
+    style={{
+      background: "#dc2626",
+      color: "white",
+      padding: "14px 36px",
+      borderRadius: "50px",
+      fontSize: "1.2rem",
+      fontWeight: "bold",
+      textDecoration: "none",
+      display: "inline-block",
+    }}
+  >
+    {t("favorite list")}
+  </Link>
+</div>
       </div>
     </div>
   );

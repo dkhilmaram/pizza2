@@ -38,15 +38,16 @@ const PromotionsPage = () => {
       year: "numeric",
     });
 
- const copyCode = (code, discount) => {
-  navigator.clipboard.writeText(code);
-  localStorage.setItem(
-    "activeCoupon",
-    JSON.stringify({ code, discount }) // store both
-  );
-  setShowCopied(true);
-  setTimeout(() => setShowCopied(false), 3000);
-};
+  const copyCode = (code, discount) => {
+    navigator.clipboard.writeText(code);
+    localStorage.setItem(
+      "activeCoupon",
+      JSON.stringify({ code, discount }) // store both
+    );
+    setShowCopied(true);
+    setTimeout(() => setShowCopied(false), 3000);
+  };
+
   // ⭐ FIXED WITH PRICE
   const addToCart = (promo) => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -130,7 +131,7 @@ const PromotionsPage = () => {
                               className="btn-offre"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                copyCode(promo.code);
+                                copyCode(promo.code, promo.discount); // ✅ pass discount here
                                 addToCart(promo);
                               }}
                             >

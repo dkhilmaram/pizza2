@@ -7,38 +7,26 @@ export default function UserDashboard({ darkMode }) {
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === "ar";
 
-  useEffect(() => {
-    if (darkMode) document.body.classList.add("dark");
-    else document.body.classList.remove("dark");
-  }, [darkMode]);
-  // ------------------ States ------------------
   const [users, setUsers] = useState([]);
   const [newUser, setNewUser] = useState({
-    name: "",
-    email: "",
-    password: "",
-    phone: "",
-    address: "",
-    gender: "",
-    role: "user",
+    name: "", email: "", password: "", phone: "", address: "", gender: "", role: "user"
   });
   const [userMsg, setUserMsg] = useState("");
   const [search, setSearch] = useState("");
   const [loadingUsers, setLoadingUsers] = useState(true);
 
-  // Confirm modals
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showRoleConfirm, setShowRoleConfirm] = useState(false);
   const [selectedRoleUserId, setSelectedRoleUserId] = useState(null);
   const [targetRole, setTargetRole] = useState("");
 
-  // ------------------ Effects ------------------
+  // Toggle dark mode class
   useEffect(() => {
-    if (darkMode) document.body.classList.add("dark");
-    else document.body.classList.remove("dark");
+    document.body.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
+  // Load users
   useEffect(() => {
     loadUsers();
   }, []);
@@ -50,7 +38,6 @@ export default function UserDashboard({ darkMode }) {
     }
   }, [userMsg]);
 
-  // ------------------ Functions ------------------
   const loadUsers = async () => {
     setLoadingUsers(true);
     try {
@@ -96,11 +83,6 @@ export default function UserDashboard({ darkMode }) {
     }
   };
 
-  const cancelDelete = () => {
-    setShowDeleteConfirm(false);
-    setSelectedUserId(null);
-  };
-
   const handleAskRoleChange = (userId, currentRole) => {
     setSelectedRoleUserId(userId);
     setTargetRole(currentRole === "admin" ? "user" : "admin");
@@ -134,9 +116,8 @@ export default function UserDashboard({ darkMode }) {
     { label: "total_regular_users", value: users.filter(u => u.role === "user").length },
   ];
 
-  // ------------------ Render ------------------
   return (
-    <div style={{ direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left", padding: 20 }}>
+    <div style={{ direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left", padding: 20, backgroundColor: "var(--bg)", color: "var(--text)" }}>
       <h2 style={{ fontWeight: 800, marginBottom: 20 }}>{t("user dashboard")}</h2>
 
       {/* Dashboard Cards */}
@@ -145,7 +126,7 @@ export default function UserDashboard({ darkMode }) {
           <div key={idx} style={{
             flex: 1,
             minWidth: 200,
-            background: "#fff",
+            background: "var(--card)",
             padding: 20,
             borderRadius: 12,
             boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
@@ -158,7 +139,7 @@ export default function UserDashboard({ darkMode }) {
       </div>
 
       {/* Modals */}
-      {showDeleteConfirm && <ConfirmModal message={t("confirm_delete_user")} onConfirm={confirmDelete} onCancel={cancelDelete} />}
+      {showDeleteConfirm && <ConfirmModal message={t("confirm_delete_user")} onConfirm={confirmDelete} onCancel={() => setShowDeleteConfirm(false)} />}
       {showRoleConfirm && <ConfirmModal message={t("confirm_change_role", { role: targetRole })} onConfirm={confirmRoleChange} onCancel={() => setShowRoleConfirm(false)} />}
 
       {/* User Message */}
@@ -192,13 +173,7 @@ export default function UserDashboard({ darkMode }) {
         <table className="table" style={{ direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left" }}>
           <thead>
             <tr>
-              <th>{t("name")}</th>
-              <th>{t("email")}</th>
-              <th>{t("phone")}</th>
-              <th>{t("address")}</th>
-              <th>{t("gender")}</th>
-              <th>{t("role")}</th>
-              <th>{t("actions")}</th>
+              {["name","email","phone","address","gender","role","actions"].map(col => <th key={col}>{t(col)}</th>)}
             </tr>
           </thead>
           <tbody>

@@ -296,7 +296,7 @@ export default function AdminPromotionsPage() {
           <div key={p._id} className="card">
             <img
               src={p.imageUrl}
-              alt={p.name.en}
+              alt={p.name?.en || p.name}
               style={{
                 width: "100%",
                 height: "200px",
@@ -305,8 +305,8 @@ export default function AdminPromotionsPage() {
             />
 
             <div style={{ padding: "1rem" }}>
-              <h3 style={{ color: "var(--primary)" }}>{p.name.en}</h3>
-              <p>{p.description.en}</p>
+              <h3 style={{ color: "var(--primary)" }}>{p.name?.en || p.name}</h3>
+              <p>{p.description?.en || p.description}</p>
 
               <strong>
                 {t("labels.price")}: {p.price} DT
@@ -317,8 +317,7 @@ export default function AdminPromotionsPage() {
               </strong>
               <br />
               <strong>
-                {t("labels.expires")}:{" "}
-                {new Date(p.expirationDate).toLocaleDateString()}
+                {t("labels.expires")}: {new Date(p.expirationDate).toLocaleDateString()}
               </strong>
               <br />
               <strong>
@@ -336,10 +335,7 @@ export default function AdminPromotionsPage() {
                 <button className="btn btn-primary" onClick={() => handleEdit(p)}>
                   {t("buttons.edit")}
                 </button>
-                <button
-                  className="btn btn-muted"
-                  onClick={() => handleDelete(p._id)}
-                >
+                <button className="btn btn-muted" onClick={() => handleDelete(p._id)}>
                   {t("buttons.delete")}
                 </button>
               </div>
