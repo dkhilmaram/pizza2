@@ -46,19 +46,40 @@ const MenuPage = () => {
     localStorage.setItem("cart", JSON.stringify(cart));
     navigate("/cart");
   };
-const addToFavorites = (pizza) => {
-  const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+const addToFavorites = async (pizza) => {
+  const token = localStorage.getItem("token");
 
-  favorites.push({
-    id: Date.now(),
-    name: pizza.name,
-    price: parseFloat(pizza.price),
-    details: pizza.ingredients,
-    img: pizza.img,
-  });
+  if (!token) {
+    alert("Please login first");
+    return;
+  }
 
-  localStorage.setItem("favorites", JSON.stringify(favorites));
-  navigate("/favorites");
+  try {
+    const res = await fetch("http://localhost:5000/api/favorites", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        id: pizza._id,                 // IMPORTANT
+        name: pizza.name,
+        price: parseFloat(pizza.price),
+        details: pizza.ingredients,
+        img: pizza.img
+      })
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to add favorite");
+    }
+
+    // optional redirect
+    navigate("/favorites");
+  } catch (err) {
+    console.error(err);
+    alert("Could not add to favorites");
+  }
 };
 
 

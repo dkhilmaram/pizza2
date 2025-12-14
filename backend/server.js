@@ -15,6 +15,7 @@ const reviewRoutes = require("./routes/reviewRoute");
 const boxMessageRoutes = require("./routes/boxMessageRoutes"); 
 const promotionRoutes = require("./routes/promotionRoutes");
 const menuRoutes = require("./routes/menuRoutes");
+const favoriteRoutes = require("./routes/favoriteRoutes");
 
 const app = express();
 
@@ -29,6 +30,9 @@ app.use(
   })
 );
 
+
+
+
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
@@ -38,6 +42,7 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/boxmessages", boxMessageRoutes);
 app.use("/api/promotions", promotionRoutes);
 app.use("/api/pizzas", menuRoutes);
+app.use("/api/favorites", favoriteRoutes);
 
 app.get("/", (req, res) => {
   res.send("🍕 Pizza App API is running!");

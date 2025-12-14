@@ -26,7 +26,7 @@ export default function OrderConfirmationPage() {
     return () => observer.disconnect();
   }, []);
 
-  // Your beautiful new theme — yellow removed!
+  // Your beautiful new theme
   const theme = {
     bg: isDark
       ? "linear-gradient(135deg, #0f0a1a 0%, #1a0d2e 40%, #2d1b3a 100%)"
@@ -190,11 +190,20 @@ export default function OrderConfirmationPage() {
     }
   };
 
+  // 🔥 Fonction pour modifier une pizza personnalisée
+  const handleEditCustomPizza = (item) => {
+    navigate("/pizza", { 
+      state: { 
+        editItem: item 
+      } 
+    });
+  };
+
   if (cart.length === 0) {
     return (
       <div dir={isRTL ? "rtl" : "ltr"} style={{ minHeight: "100vh", background: theme.bg, display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
         <div style={{ background: theme.cardBg, padding: "4rem", borderRadius: "32px", textAlign: "center", boxShadow: theme.shadow }}>
-          <div style={{ fontSize: "7rem", marginBottom: "1.5rem" }}>Pizza</div>
+          <div style={{ fontSize: "7rem", marginBottom: "1.5rem" }}>🍕</div>
           <h2 style={{ color: theme.text, fontSize: "2.5rem", fontWeight: "800" }}>
             {t("emptyCart")}
           </h2>
@@ -343,16 +352,77 @@ export default function OrderConfirmationPage() {
 
                 <div style={{ maxHeight: "350px", overflowY: "auto", marginBottom: "2rem" }}>
                   {cart.map(item => (
-                    <div key={item._id || item.id} style={{ display: "flex", justifyContent: "space-between", marginBottom: "1.5rem" }}>
-                      <div>
-                        <div style={{ fontWeight: "700", color: theme.text, fontSize: "1.2rem" }}>{item.name}</div>
-                        <div style={{ fontSize: "1rem", color: theme.textMuted }}>
-                          {item.quantity} × {parseFloat(item.price || 0).toFixed(2)} €
+                    <div key={item._id || item.id} style={{ marginBottom: "1.5rem", background: theme.inputBg, padding: "1.2rem", borderRadius: "16px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: "700", color: theme.text, fontSize: "1.2rem", marginBottom: "0.3rem" }}>
+                            {item.name}
+                          </div>
+                          <div style={{ fontSize: "1rem", color: theme.textMuted }}>
+                            {item.quantity} × {parseFloat(item.price || 0).toFixed(2)} €
+                          </div>
+                        </div>
+                        <div style={{ fontWeight: "700", color: theme.text, fontSize: "1.3rem" }}>
+                          {((item.quantity || 1) * parseFloat(item.price || 0)).toFixed(2)} €
                         </div>
                       </div>
-                      <div style={{ fontWeight: "700", color: theme.text, fontSize: "1.3rem" }}>
-                        {((item.quantity || 1) * parseFloat(item.price || 0)).toFixed(2)} €
-                      </div>
+                      
+                      {/* 🔥 Bouton Modifier professionnel pour les pizzas personnalisées */}
+                      {item.type === "custom" && (
+                        <button
+                          type="button"
+                          onClick={() => handleEditCustomPizza(item)}
+                          style={{
+                            marginTop: "0.8rem",
+                            width: "100%",
+                            padding: "0.9rem 1.2rem",
+                            background: isDark 
+                              ? "linear-gradient(135deg, #475569 0%, #334155 100%)" 
+                              : "linear-gradient(135deg, #64748b 0%, #475569 100%)",
+                            color: "white",
+                            border: isDark ? "1px solid #64748b" : "1px solid #94a3b8",
+                            borderRadius: "12px",
+                            fontSize: "0.95rem",
+                            fontWeight: "600",
+                            cursor: "pointer",
+                            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                            boxShadow: isDark 
+                              ? "0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)" 
+                              : "0 4px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.5rem",
+                          }}
+                          onMouseOver={(e) => {
+                            e.target.style.transform = "translateY(-2px)";
+                            e.target.style.boxShadow = isDark 
+                              ? "0 6px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15)" 
+                              : "0 6px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3)";
+                          }}
+                          onMouseOut={(e) => {
+                            e.target.style.transform = "translateY(0)";
+                            e.target.style.boxShadow = isDark 
+                              ? "0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)" 
+                              : "0 4px 12px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)";
+                          }}
+                        >
+                          <svg 
+                            width="16" 
+                            height="16" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="currentColor" 
+                            strokeWidth="2.5" 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round"
+                          >
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                          </svg>
+                          <span>{t("edit") || "Modifier"}</span>
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>

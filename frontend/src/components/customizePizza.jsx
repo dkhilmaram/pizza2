@@ -1,16 +1,45 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function CustomPizza() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 🔥 Récupérer les données de modification depuis location.state
+  const editData = location.state?.editItem;
 
   const [size, setSize] = useState("medium");
   const [crust, setCrust] = useState("classic");
   const [sauce, setSauce] = useState("tomato");
   const [toppings, setToppings] = useState([]);
   const [pizzaName, setPizzaName] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  // 🔥 Charger les données si on est en mode modification
+  useEffect(() => {
+    if (editData) {
+      setIsEditMode(true);
+      setPizzaName(editData.name || "");
+      
+      // Parser les détails de la pizza
+      try {
+        const details = typeof editData.details === "string" 
+          ? JSON.parse(editData.details) 
+          : editData.details;
+        
+        if (details) {
+          setSize(details.size || "medium");
+          setCrust(details.crust || "classic");
+          setSauce(details.sauce || "tomato");
+          setToppings(details.toppings || []);
+        }
+      } catch (err) {
+        console.error("Error parsing pizza details:", err);
+      }
+    }
+  }, [editData]);
 
   const sizes = {
     small: t("sizes.small"),
@@ -46,25 +75,36 @@ export default function CustomPizza() {
 
   const isRTL = i18n.language === "ar";
 
-  // 🔥 FIXED add-to-cart
+  // 🔥 Fonction pour ajouter/modifier la pizza dans le panier
   const addCustomPizzaToCart = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    cart.push({
-      id: Date.now(),
+    const pizzaData = {
       name: pizzaName || "Custom Pizza",
       quantity: 1,
-      price: Number(totalPrice.toFixed(2)), // avoids decimal bugs
+      price: Number(totalPrice.toFixed(2)),
       details: JSON.stringify({
         size,
         crust,
         sauce,
         toppings,
-      }), // store REAL VALUES, not translated text
-      type: "custom", // avoid conflict with regular menu pizzas
-    });
+      }),
+      type: "custom",
+    };
 
-    localStorage.setItem("cart", JSON.stringify(cart));
+    if (isEditMode && editData) {
+      // Mode modification: remplacer l'ancien item
+      const updatedCart = cart.map(item => 
+        item.id === editData.id ? { ...pizzaData, id: editData.id } : item
+      );
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    } else {
+      // Mode création: ajouter un nouvel item
+      pizzaData.id = Date.now();
+      cart.push(pizzaData);
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
     navigate("/cart");
   };
 
@@ -88,7 +128,7 @@ export default function CustomPizza() {
           color: "var(--primary)",
         }}
       >
-        {t("createYourPizza")}
+        {isEditMode ? t("editYourPizza") || "Modifier votre pizza" : t("createYourPizza")}
       </h1>
 
       <div
@@ -150,8 +190,9 @@ export default function CustomPizza() {
                   }}
                 >
                   <div>{sizes[s]}</div>
+                  {/* Fixed: was invalid t(sizeShort.${s}) */}
                   <div style={{ fontSize: "0.9rem", color: "var(--muted)" }}>
-                    {t(`sizeShort.${s}`)}
+                    {s === "small" ? "28cm" : s === "medium" ? "33cm" : "40cm"}
                   </div>
                 </button>
               ))}
@@ -288,6 +329,7 @@ export default function CustomPizza() {
               {sizes[size]}
             </p>
 
+            {/* Fixed: proper nested translation keys */}
             <p style={{ color: "var(--muted)" }}>
               {t("crust")}: {t(`crusts.${crust}`)}
             </p>
@@ -337,7 +379,7 @@ export default function CustomPizza() {
             }}
             onClick={addCustomPizzaToCart}
           >
-            {t("addToCart")}
+            {isEditMode ? t("updateCart") || "Mettre à jour" : t("addToCart")}
           </button>
 
           <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
