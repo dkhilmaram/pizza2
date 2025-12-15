@@ -387,7 +387,16 @@
   "browseMenu": "Browse Menu",
    "somber": "Light",
   "clair": "Dark",
-   "favorite list": "Favorites"
+   "favorite list": "Favorites",
+    "total_revenue": "Total Revenue",
+     "last_orders": "Last Orders",
+  "ID": "ID",
+   "admin.managePizzas": "Manage Pizzas",
+    "admin.managePromotions": "Manage Promotions",
+   "confirmDeletePizza": "Are you sure you want to delete this pizza?",
+   "promo.confirmDelete": "Are you sure you want to delete this promotion?",
+   "confirmDeletePizza": "Are you sure you want to remove this pizza from favorites?"
+   
 
   
 

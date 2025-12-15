@@ -1,6 +1,7 @@
 // src/admin/AdminPromotionsPage.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import ConfirmModal from "../components/ConfirmModal"; // make sure path is correct
 
 export default function AdminPromotionsPage() {
   const { t, i18n } = useTranslation();
@@ -18,8 +19,15 @@ export default function AdminPromotionsPage() {
     imageUrl: "",
   });
 
+  // Modal state
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedPromoId, setSelectedPromoId] = useState(null);
+
   const token = localStorage.getItem("token");
   const API_URL = "http://localhost:5000/api/promotions";
+
+  // NEW: ref for hero section
+  const heroRef = useRef(null);
 
   // ---------------- Fetch promotions ----------------
   useEffect(() => {
@@ -76,7 +84,8 @@ export default function AdminPromotionsPage() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` },
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(payload),
         });
 
@@ -114,22 +123,38 @@ export default function AdminPromotionsPage() {
       discount: promo.discount * 100,
       imageUrl: promo.imageUrl,
     });
+
+    // NEW: scroll hero section into view
+    if (heroRef.current) {
+      heroRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
-  // ---------------- Delete ----------------
-  const handleDelete = async (id) => {
-    if (!window.confirm(t("buttons.delete") + "?")) return;
+  // ---------------- Delete (show modal) ----------------
+  const handleDelete = (id) => {
+    setSelectedPromoId(id);
+    setShowConfirm(true);
+  };
 
+  const confirmDelete = async () => {
     try {
-      await fetch(`${API_URL}/${id}`, {
+      await fetch(`${API_URL}/${selectedPromoId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setPromotions(promotions.filter((p) => p._id !== id));
+      setPromotions(promotions.filter((p) => p._id !== selectedPromoId));
     } catch (err) {
       console.error(err);
+    } finally {
+      setShowConfirm(false);
+      setSelectedPromoId(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowConfirm(false);
+    setSelectedPromoId(null);
   };
 
   // ========================================================
@@ -158,6 +183,7 @@ export default function AdminPromotionsPage() {
 
       {/* ---------------- FORM + PREVIEW ---------------- */}
       <div
+        ref={heroRef} // NEW: attach ref here
         className="card"
         style={{
           marginBottom: "2rem",
@@ -343,6 +369,15 @@ export default function AdminPromotionsPage() {
           </div>
         ))}
       </div>
+
+      {/* ---------------- CONFIRM MODAL ---------------- */}
+      {showConfirm && (
+        <ConfirmModal
+          message={t("promo.confirmDelete")}
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+        />
+      )}
     </div>
   );
 }

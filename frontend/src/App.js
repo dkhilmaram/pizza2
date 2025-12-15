@@ -25,6 +25,7 @@ import OrderConfirmationPage from "./components/OrderConfirmationPage";
 import OrderSuccessPage from "./components/OrderSuccessPage"; 
 import TrackOrderPage from "./components/TrackOrderPage"; 
 import Favorites from "./components/favorites";
+import DashboardT from "./components/DashboardT"; 
 
 
 export default function App() {
@@ -166,6 +167,16 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <TrackOrderPage darkMode={darkMode} />
+              </ProtectedRoute>
+            }
+          />
+           {/* Admin routes */}
+          {/* ================= ADMIN ================= */}
+          <Route
+            path="/dashboardT"
+            element={
+              <ProtectedRoute role="admin">
+                <DashboardT darkMode={darkMode} />
               </ProtectedRoute>
             }
           />

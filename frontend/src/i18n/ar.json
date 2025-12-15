@@ -378,7 +378,16 @@
      "favorites": "المفضلة",
   "noFavoritesYet": "ليس لديك عناصر مفضلة بعد.",
   "browseMenu": "تصفح القائمة",
-   "favorite list": "المفضلة"
+   "favorite list": "المفضلة",
+    "total_revenue": "إجمالي الإيرادات",
+
+  "last_orders": "آخر الطلبات",
+  "ID": "المعرّف",
+    "admin.managePizzas": " إدارة بيتزا ",
+     "admin.managePromotions": "إدارة العروض الترويجية",
+    "confirmDeletePizza": "هل أنت متأكد من أنك تريد حذف هذه البيتزا؟",
+"promo.confirmDelete": "هل أنت متأكد من أنك تريد حذف هذا العرض؟",
+"confirmRemoveFavoritePizza": "هل أنت متأكد من أنك تريد إزالة هذه البيتزا من المفضلة؟"
 
 
 }

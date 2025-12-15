@@ -366,7 +366,16 @@
   "favorites": "Preferiti",
   "noFavoritesYet": "Non hai ancora nessun preferito.",
   "browseMenu": "Vedi il menu",
-   "favorite list": "Preferiti"
+   "favorite list": "Preferiti",
+   
+  "last_orders": "Ultimi ordini",
+   "total_revenue": "Ricavo totale",
+  "ID": "ID",
+      "admin.managePizzas": "Gestisci pizza",
+       "admin.managePromotions": "Gestisci promozioni",
+      "admin.confirmDeletePizza": "Sei sicuro di voler eliminare questa pizza?",
+"promo.confirmDelete": "Sei sicuro di voler eliminare questa promozione?",
+"confirmRemoveFavoritePizza": "Sei sicuro di voler rimuovere questa pizza dai preferiti?"
   
   
 

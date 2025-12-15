@@ -4,7 +4,7 @@
   "login": "Iniciar sesión",
   "register": "Registrarse",
   "profile": "Perfil",
-  "dashboard": "Panel de administración",
+  "dashboard": "administración",
   "logout": "Cerrar sesión",
   "order": "Ordenar",
   "new": "Nuevo",
@@ -367,7 +367,16 @@
      "favorites": "Favoritos",
   "noFavoritesYet": "Aún no tienes elementos favoritos.",
   "browseMenu": "Ver menú",
-   "favorite list": "Favoritos"
+   "favorite list": "Favoritos",
+   "total_revenue": "Ingresos totales",
+
+  "last_orders": "Últimos pedidos",
+  "ID": "ID",
+     "admin.managePizzas": "Gestionar pizza",
+      "admin.managePromotions": "Gestionar promociones",
+     "confirmDeletePizza": "¿Estás seguro de que quieres eliminar esta pizza?",
+"promo.confirmDelete": "¿Estás seguro de que quieres eliminar esta promoción?",
+"confirmRemoveFavoritePizza": "¿Estás seguro de que quieres quitar esta pizza de favoritos?"
 
 
      

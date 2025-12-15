@@ -1,6 +1,7 @@
 // src/admin/AdminMenuPage.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import ConfirmModal from "../components/ConfirmModal"; // make sure path is correct
 
 export default function AdminMenuPage() {
   const { t, i18n } = useTranslation();
@@ -12,7 +13,14 @@ export default function AdminMenuPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Modal state
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedPizzaId, setSelectedPizzaId] = useState(null);
+
   const API_URL = "http://localhost:5000/api/pizzas";
+
+  // NEW: ref for the hero section
+  const heroRef = useRef(null);
 
   useEffect(() => {
     fetchPizzas();
@@ -42,18 +50,35 @@ export default function AdminMenuPage() {
       ingredients: pizza.ingredients,
       img: pizza.img,
     });
+
+    // Scroll hero section into view smoothly
+    if (heroRef.current) {
+      heroRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm(t("confirm.delete"))) return;
+  const handleDelete = (id) => {
+    setSelectedPizzaId(id);
+    setShowConfirm(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_URL}/${selectedPizzaId}`, { method: "DELETE" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      fetchPizzas();
+      setPizzas(pizzas.filter((p) => p._id !== selectedPizzaId));
     } catch (err) {
       console.error(err);
       setError(t("error.deletePizza"));
+    } finally {
+      setShowConfirm(false);
+      setSelectedPizzaId(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowConfirm(false);
+    setSelectedPizzaId(null);
   };
 
   const handleSubmit = async () => {
@@ -105,11 +130,12 @@ export default function AdminMenuPage() {
           textAlign: "center",
         }}
       >
-        {t("admin manage Pizzas")}
+        {t("admin.managePizzas")}
       </h1>
 
       {/* FORM + PREVIEW */}
       <div
+        ref={heroRef} // NEW: attach ref here
         className="card"
         style={{
           marginBottom: "2rem",
@@ -121,7 +147,7 @@ export default function AdminMenuPage() {
       >
         {/* LEFT — FORM */}
         <div>
-          <h2>{editing ? t("edit Pizza") : t("add Pizza")}</h2>
+          <h2>{editing ? t("editPizza") : t("addPizza")}</h2>
           {error && <p className="msg">{error}</p>}
 
           <input
@@ -159,18 +185,18 @@ export default function AdminMenuPage() {
             disabled={loading}
             style={{ marginTop: "1rem" }}
           >
-            {editing ? t("save Changes") : t("add Pizza")}
+            {editing ? t("saveChanges") : t("addPizza")}
           </button>
         </div>
 
         {/* RIGHT — PREVIEW */}
         <div style={{ textAlign: "center" }}>
-          <h3 style={{ marginBottom: "1rem" }}>{t("preview ")}</h3>
+          <h3 style={{ marginBottom: "1rem" }}>{t("preview")}</h3>
 
           {form.img ? (
             <img
               src={form.img}
-              alt={t("preview ")}
+              alt={t("preview")}
               style={{
                 width: "100%",
                 height: "250px",
@@ -193,7 +219,7 @@ export default function AdminMenuPage() {
                 color: "#777",
               }}
             >
-              {t("no Image")}
+              {t("noImage")}
             </div>
           )}
         </div>
@@ -220,7 +246,7 @@ export default function AdminMenuPage() {
               <div style={{ padding: "1rem" }}>
                 <h3 style={{ color: "var(--primary)" }}>{p.name}</h3>
                 <p>{p.ingredients}</p>
-                <strong>{p.price.toFixed(2)} €</strong>
+                <strong>{parseFloat(p.price).toFixed(2)} €</strong>
 
                 <div
                   style={{
@@ -241,6 +267,15 @@ export default function AdminMenuPage() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* CONFIRM MODAL */}
+      {showConfirm && (
+        <ConfirmModal
+          message={t("confirmDeletePizza")}
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+        />
       )}
     </div>
   );

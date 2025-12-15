@@ -44,6 +44,7 @@ exports.createOrder = async (req, res) => {
 };
 
 // Admin: Update order status
+// Admin: Update order status
 exports.updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -51,22 +52,22 @@ exports.updateOrderStatus = async (req, res) => {
     const order = await Order.findById(req.params.id).populate("user", "name email");
     if (!order) return res.status(404).json({ message: "Order not found" });
 
-    order.status = status;
-    await order.save();
-
-    // Send email using the modular mailer
-    try {
-      await sendStatusEmail({
-        to: order.user.email,
-        userName: order.user.name,
-        orderId: order._id,
-        status: order.status,
-      });
-    } catch (err) {
-      console.error("Failed to send status email:", err.message);
+    if (order.status === status) {
+      return res.status(400).json({ message: "Status is already the same" });
     }
 
-    res.json(order);
+    order.status = status;
+    await order.save(); // save first
+
+    // Fire-and-forget email
+    sendStatusEmail({
+      to: order.user.email,
+      userName: order.user.name,
+      orderId: order._id,
+      status: order.status,
+    }).catch(err => console.error("Failed to send status email:", err.message));
+
+    res.json(order); // respond immediately
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

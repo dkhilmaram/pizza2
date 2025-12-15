@@ -121,7 +121,11 @@ export default function Navbar() {
           )}
 
           {user && user.role === "admin" && (
+
             <>
+              <NavLink to="/dashboardt" style={linkStyle}>
+                {t("dashboard")}
+              </NavLink>
               <NavLink to="/userdashboard" style={linkStyle}>
                 {t("userdashboard")}
               </NavLink>
@@ -201,6 +205,7 @@ export default function Navbar() {
               </Link>
             </>
           )}
+          
 
           {/* Logout */}
           {user && (

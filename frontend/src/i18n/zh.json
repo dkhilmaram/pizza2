@@ -361,7 +361,16 @@
      "favorites": "收藏",
   "noFavoritesYet": "你还没有收藏的项目。",
   "browseMenu": "浏览菜单",
-   "favorite list": "收藏列表"
+   "favorite list": "收藏列表",
+    "total_revenue": "总收入",
+
+  "last_orders": "最近订单",
+  "ID": "编号",
+ "admin.managePizzas": "管理披萨",
+  "admin.managePromotions": "管理促销活动",
+  "confirmDeletePizza": "您确定要删除此披萨吗？",
+"promo.confirmDelete": "您确定要删除此优惠吗？",
+"confirmRemoveFavoritePizza": "您确定要从收藏中移除此披萨吗？"
       
 }
 

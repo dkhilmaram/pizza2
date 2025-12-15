@@ -1,12 +1,19 @@
+// src/components/Favorites.jsx
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import ConfirmModal from "./ConfirmModal"; // adjust path if needed
 
 export default function Favorites({ darkMode = false }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const isRTL = i18n.language === "ar";
+
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPizzaId, setSelectedPizzaId] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -32,16 +39,29 @@ export default function Favorites({ darkMode = false }) {
     fetchFavorites();
   }, [token]);
 
-  const removeFromFavorites = async (pizzaId) => {
+  const removeFromFavorites = (pizzaId) => {
+    setSelectedPizzaId(pizzaId);
+    setShowConfirm(true);
+  };
+
+  const confirmRemove = async () => {
     try {
-      await fetch(`http://localhost:5000/api/favorites/${pizzaId}`, {
+      await fetch(`http://localhost:5000/api/favorites/${selectedPizzaId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      setFavorites((prev) => prev.filter((p) => p._id !== pizzaId));
+      setFavorites((prev) => prev.filter((p) => p._id !== selectedPizzaId));
     } catch (err) {
       console.error(err);
+    } finally {
+      setShowConfirm(false);
+      setSelectedPizzaId(null);
     }
+  };
+
+  const cancelRemove = () => {
+    setShowConfirm(false);
+    setSelectedPizzaId(null);
   };
 
   const addToCart = (pizza) => {
@@ -52,7 +72,6 @@ export default function Favorites({ darkMode = false }) {
   };
 
   const containerStyle = { maxWidth: "1200px", margin: "0 auto", padding: "2rem 1rem" };
-
   const heroStyle = {
     display: "flex",
     alignItems: "center",
@@ -68,7 +87,6 @@ export default function Favorites({ darkMode = false }) {
     color: "var(--primary-dark, #dc2626)",
     flexWrap: "wrap",
   };
-
   const heroImageStyle = {
     width: "250px",
     height: "100%",
@@ -77,19 +95,16 @@ export default function Favorites({ darkMode = false }) {
     flexShrink: 0,
     minWidth: "100px",
   };
-
   const heroTextStyle = {
     flex: 1,
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    textAlign: "left",
+    textAlign: isRTL ? "right" : "left",
     height: "100%",
     overflow: "hidden",
   };
-
   const gridStyle = { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "2rem" };
-
   const cardStyle = {
     display: "flex",
     flexDirection: "column",
@@ -101,13 +116,9 @@ export default function Favorites({ darkMode = false }) {
     boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
     height: "400px",
   };
-
   const cardHoverStyle = { transform: "translateY(-6px)", boxShadow: "0 12px 25px rgba(0,0,0,0.15)" };
-
   const cardContentStyle = { padding: "1rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" };
-
   const btnContainerStyle = { display: "flex", gap: "1rem", marginTop: "1rem", justifyContent: "space-between" };
-
   const btnStyle = { flex: 1, padding: "0.5rem 0", borderRadius: "10px", border: "none", fontWeight: "600", cursor: "pointer", transition: "0.25s all" };
   const primaryBtnStyle = { ...btnStyle, background: "var(--primary)", color: "#fff" };
   const mutedBtnStyle = { ...btnStyle, background: "transparent", border: "1px solid var(--border)", color: "var(--text)" };
@@ -155,6 +166,14 @@ export default function Favorites({ darkMode = false }) {
             </div>
           ))}
         </div>
+      )}
+
+      {showConfirm && (
+        <ConfirmModal
+          message={t("confirmDeletePizza")}
+          onConfirm={confirmRemove}
+          onCancel={cancelRemove}
+        />
       )}
     </div>
   );
