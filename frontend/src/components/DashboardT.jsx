@@ -10,30 +10,17 @@ export default function DashboardT({ darkMode }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-<<<<<<< HEAD
-  /* ================= THEME ================= */
-=======
   // Dark mode
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2
   useEffect(() => {
     document.body.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-<<<<<<< HEAD
-  /* ================= DATA LOAD ================= */
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
-=======
   // Load data
   useEffect(() => {
     loadDashboardData();
   }, []);
 
   const loadDashboardData = async () => {
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2
     try {
       const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
@@ -43,34 +30,22 @@ export default function DashboardT({ darkMode }) {
         axios.get("http://localhost:5000/api/orders", { headers }),
       ]);
 
-<<<<<<< HEAD
-      setUsers(usersRes.data ?? []);
-      setOrders(ordersRes.data ?? []);
-    } catch (err) {
-      console.error("Dashboard load error:", err);
-=======
       setUsers(usersRes.data || []);
       setOrders(ordersRes.data || []);
     } catch (error) {
       console.error("Dashboard load error:", error);
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2
     } finally {
       setLoading(false);
     }
   };
 
-  /* ================= KPIs ================= */
+  // KPIs
   const totalUsers = users.length;
   const totalAdmins = users.filter(u => u.role === "admin").length;
   const totalOrders = orders.length;
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalPrice, 0);
 
-<<<<<<< HEAD
-  const countByStatus = status =>
-=======
-  const statusCount = (status) =>
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2
-    orders.filter(o => o.status === status).length;
+  const statusCount = (status) => orders.filter(o => o.status === status).length;
 
   const kpiCards = [
     { label: t("total_users"), value: totalUsers },
@@ -101,13 +76,7 @@ export default function DashboardT({ darkMode }) {
         {t("admin_dashboard")}
       </h2>
 
-      {/* ================= KPI CARDS ================= */}
-<<<<<<< HEAD
-      <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginBottom: 35 }}>
-        {kpiCards.map(({ label, value }) => (
-          <div
-            key={label}
-=======
+      {/* KPI Cards */}
       <div
         style={{
           display: "flex",
@@ -119,7 +88,6 @@ export default function DashboardT({ darkMode }) {
         {kpiCards.map((card, index) => (
           <div
             key={index}
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2
             style={{
               flex: 1,
               minWidth: 220,
@@ -130,34 +98,15 @@ export default function DashboardT({ darkMode }) {
               textAlign: "center",
             }}
           >
-<<<<<<< HEAD
-            <h3 style={{ margin: 0, fontWeight: 700 }}>{label}</h3>
+            <h3 style={{ margin: 0, fontWeight: 700 }}>{card.label}</h3>
             <p style={{ fontSize: 28, fontWeight: "bold", marginTop: 12 }}>
-              {value}
-=======
-            <h3 style={{ margin: 0, fontWeight: 700 }}>
-              {card.label}
-            </h3>
-            <p
-              style={{
-                fontSize: 28,
-                fontWeight: "bold",
-                marginTop: 12,
-              }}
-            >
               {card.value}
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2
             </p>
           </div>
         ))}
       </div>
 
-      {/* ================= ORDERS BY STATUS ================= */}
-<<<<<<< HEAD
-      <div style={{ display: "flex", gap: 20, flexWrap: "wrap", marginBottom: 35 }}>
-        {["pending", "preparing", "delivering", "completed", "canceled"].map(
-          status => (
-=======
+      {/* Orders by Status */}
       <div
         style={{
           display: "flex",
@@ -168,7 +117,6 @@ export default function DashboardT({ darkMode }) {
       >
         {["pending", "preparing", "delivering", "completed", "canceled"].map(
           (status) => (
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2
             <div
               key={status}
               style={{
@@ -180,41 +128,21 @@ export default function DashboardT({ darkMode }) {
                 textAlign: "center",
               }}
             >
-<<<<<<< HEAD
-              <h4>{t(status)}</h4>
-              <strong style={{ fontSize: 22 }}>
-                {countByStatus(status)}
-=======
-              <h4 style={{ marginBottom: 10 }}>
-                {t(status)}
-              </h4>
-              <strong style={{ fontSize: 22 }}>
-                {statusCount(status)}
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2
-              </strong>
+              <h4 style={{ marginBottom: 10 }}>{t(status)}</h4>
+              <strong style={{ fontSize: 22 }}>{statusCount(status)}</strong>
             </div>
           )
         )}
       </div>
 
-      {/* ================= LAST ORDERS ================= */}
+      {/* Last Orders */}
       <div className="card" style={{ padding: 22 }}>
-<<<<<<< HEAD
         <h3 style={{ marginBottom: 15 }}>{t("last_orders")}</h3>
-=======
-        <h3 style={{ marginBottom: 15 }}>
-          {t("last_orders")}
-        </h3>
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2
 
         <table className="table">
           <thead>
             <tr>
-<<<<<<< HEAD
-              <th>{t("ID")}</th>
-=======
               <th>ID</th>
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2
               <th>{t("user")}</th>
               <th>{t("total_price")}</th>
               <th>{t("status")}</th>
@@ -234,8 +162,4 @@ export default function DashboardT({ darkMode }) {
       </div>
     </div>
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 40d2bfd4fe1e30953639b23b858c10ea46fb30b2

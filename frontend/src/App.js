@@ -23,7 +23,7 @@ import Profile from "./components/Profile";
 
 /* ================= ADMIN ================= */
 import AdminDashboard from "./components/AdminDashboard";
-import DashboardT from "./components/DashboardT"; // ✅ corrigé
+
 import SeeOrders from "./components/SeeOrders";
 import BoxMessages from "./components/BoxMessage";
 import PizzaPetes from "./components/PizzaPetes";
@@ -196,16 +196,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-           {/* Admin routes */}
-          {/* ================= ADMIN ================= */}
-          <Route
-            path="/dashboardT"
-            element={
-              <ProtectedRoute role="admin">
-                <DashboardT darkMode={darkMode} />
-              </ProtectedRoute>
-            }
-          />
+          
           <Route
             path="/favorites"
             element={
