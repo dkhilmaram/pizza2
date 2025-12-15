@@ -1,32 +1,45 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 
+/* ================= CORE ================= */
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+/* ================= AUTH ================= */
 import Login from "./components/Login";
 import Register from "./components/Register";
-import Profile from "./components/Profile";
-import AdminDashboard from "./components/AdminDashboard";
 import ForgetPassword from "./components/ForgetPassword";
-import ProtectedRoute from "./components/ProtectedRoute";
+
+/* ================= HOME & PUBLIC ================= */
 import Welcome from "./components/Welcome";
 import About from "./components/about";
 import Contact from "./components/contact";
 import Reviews from "./components/Reviews";
 import Promotions from "./components/Promotions";
 import Menu from "./components/menu";
-import BoxMessages from "./components/BoxMessage";
-import CustomPizza from "./components/customizePizza";
+
+/* ================= PROFILE ================= */
+import Profile from "./components/Profile";
+
+/* ================= ADMIN ================= */
+import AdminDashboard from "./components/AdminDashboard";
+import DashboardT from "./components/DashboardT"; // ✅ corrigé
 import SeeOrders from "./components/SeeOrders";
+import BoxMessages from "./components/BoxMessage";
 import PizzaPetes from "./components/PizzaPetes";
-import CartPage from "./components/cart";
 import AdminPromo from "./components/adminPromo";
-import AdminMenu from "./components/adminmenu"; 
-import OrderConfirmationPage from "./components/OrderConfirmationPage"; 
-import OrderSuccessPage from "./components/OrderSuccessPage"; 
-import TrackOrderPage from "./components/TrackOrderPage"; 
+import AdminMenu from "./components/adminmenu";
+
+/* ================= USER ================= */
+import CustomPizza from "./components/customizePizza";
+import CartPage from "./components/cart";
 import Favorites from "./components/favorites";
 import DashboardT from "./components/DashboardT"; 
 
+/* ================= ORDERS ================= */
+import OrderConfirmationPage from "./components/OrderConfirmationPage";
+import OrderSuccessPage from "./components/OrderSuccessPage";
+import TrackOrderPage from "./components/TrackOrderPage";
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -40,22 +53,27 @@ export default function App() {
 
       <main className="container-page" style={{ paddingTop: 24, paddingBottom: 24 }}>
         <Routes>
-          {/* Home */}
+
+          {/* ================= HOME ================= */}
           <Route
             path="/"
             element={
-              !token ? <Welcome darkMode={darkMode} /> :
-              user?.role === "admin" ? <AdminDashboard darkMode={darkMode} /> :
-              <Welcome darkMode={darkMode} />
+              !token ? (
+                <Welcome darkMode={darkMode} />
+              ) : user?.role === "admin" ? (
+                <AdminDashboard darkMode={darkMode} />
+              ) : (
+                <Welcome darkMode={darkMode} />
+              )
             }
           />
 
-          {/* Auth */}
+          {/* ================= AUTH ================= */}
           <Route path="/login" element={<Login darkMode={darkMode} />} />
           <Route path="/register" element={<Register darkMode={darkMode} />} />
           <Route path="/forgot-password" element={<ForgetPassword darkMode={darkMode} />} />
 
-          {/* Profile */}
+          {/* ================= PROFILE ================= */}
           <Route
             path="/profile"
             element={
@@ -65,7 +83,15 @@ export default function App() {
             }
           />
 
-          {/* Admin routes */}
+          {/* ================= ADMIN ================= */}
+          <Route
+            path="/dashboardT"
+            element={
+              <ProtectedRoute role="admin">
+                <DashboardT darkMode={darkMode} />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/userdashboard"
             element={
@@ -115,12 +141,16 @@ export default function App() {
             }
           />
 
-          {/* User orders */}
+          {/* ================= USER ORDERS ================= */}
           <Route
             path="/orders"
             element={
               <ProtectedRoute>
-                {user?.role === "admin" ? <SeeOrders darkMode={darkMode} /> : <CustomPizza darkMode={darkMode} />}
+                {user?.role === "admin" ? (
+                  <SeeOrders darkMode={darkMode} />
+                ) : (
+                  <CustomPizza darkMode={darkMode} />
+                )}
               </ProtectedRoute>
             }
           />
@@ -141,7 +171,7 @@ export default function App() {
             }
           />
 
-          {/* Checkout / Order Confirmation */}
+          {/* ================= CHECKOUT / ORDER ================= */}
           <Route
             path="/checkout"
             element={
@@ -150,8 +180,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* Order Success */}
           <Route
             path="/order-success"
             element={
@@ -160,8 +188,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-
-          {/* Track Order */}
           <Route
             path="/track-order"
             element={
@@ -181,15 +207,15 @@ export default function App() {
             }
           />
           <Route
-  path="/favorites"
-  element={
-    <ProtectedRoute>
-      <Favorites darkMode={darkMode} />
-    </ProtectedRoute>
-  }
-/>
+            path="/favorites"
+            element={
+              <ProtectedRoute>
+                <Favorites darkMode={darkMode} />
+              </ProtectedRoute>
+            }
+          />
 
-          {/* Public pages */}
+          {/* ================= PUBLIC PAGES ================= */}
           <Route path="/reviews" element={<Reviews darkMode={darkMode} />} />
           <Route path="/promotions" element={<Promotions darkMode={darkMode} />} />
           <Route path="/menu" element={<Menu darkMode={darkMode} />} />
