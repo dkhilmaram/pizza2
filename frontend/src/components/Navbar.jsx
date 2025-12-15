@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import DarkModeToggle from "./DarkModeToggle";
 import LanguageSwitcher from "./langageswitcher";
@@ -49,10 +48,7 @@ export default function Navbar() {
   };
 
   return (
-    <header
-      className="header"
-      style={{ background: "#f9fafb", color: "#dc2626", position: "relative" }}
-    >
+    <header className="header" style={{ background: "#f9fafb", color: "#dc2626" }}>
       <div
         className="inner container-page"
         style={{
@@ -72,11 +68,7 @@ export default function Navbar() {
           {user && (
             <Link to="/profile">
               <img
-                src={
-                  user.avatar ||
-                  user.image ||
-                  "https://via.placeholder.com/44"
-                }
+                src={user.avatar || user.image || "https://via.placeholder.com/44"}
                 alt={t("profile")}
                 style={avatarStyle}
               />
@@ -85,52 +77,46 @@ export default function Navbar() {
         </div>
 
         {/* Navigation Links */}
-        <nav
-          className="nav"
-          style={{ display: "flex", gap: "12px", alignItems: "center" }}
-        >
+        <nav style={{ display: "flex", gap: "12px", alignItems: "center" }}>
           {!user || user.role !== "admin" ? (
-            <NavLink to="/" style={linkStyle}>
-              {t("home")}
-            </NavLink>
+            <NavLink to="/" style={linkStyle}>{t("home")}</NavLink>
           ) : null}
 
           {!user && (
             <>
-              <NavLink to="/login" style={linkStyle}>
-                {t("login")}
-              </NavLink>
-              <NavLink to="/register" style={linkStyle}>
-                {t("register")}
-              </NavLink>
+              <NavLink to="/login" style={linkStyle}>{t("login")}</NavLink>
+              <NavLink to="/register" style={linkStyle}>{t("register")}</NavLink>
             </>
           )}
 
+          {/* USER LINKS */}
           {user && user.role !== "admin" && (
             <>
-              <NavLink to="/orders" style={linkStyle}>
-                {t("orders")}
-              </NavLink>
-              <NavLink to="/contact" style={linkStyle}>
-                {t("contact")}
-              </NavLink>
-              <NavLink to="/about" style={linkStyle}>
-                {t("about")}
-              </NavLink>
+              <NavLink to="/orders" style={linkStyle}>{t("orders")}</NavLink>
+              <NavLink to="/contact" style={linkStyle}>{t("contact")}</NavLink>
+              <NavLink to="/about" style={linkStyle}>{t("about")}</NavLink>
             </>
           )}
 
+          {/* 🔥 ADMIN LINKS */}
           {user && user.role === "admin" && (
             <>
+              <NavLink to="/dashboardt" style={linkStyle}>
+                {t("dashboard")}
+              </NavLink>
+
               <NavLink to="/userdashboard" style={linkStyle}>
                 {t("userdashboard")}
               </NavLink>
+
               <NavLink to="/orderdashboard" style={linkStyle}>
                 {t("orderdashboard")}
               </NavLink>
+
               <NavLink to="/boxmessages" style={linkStyle}>
                 {t("box_messages")}
               </NavLink>
+
               <NavLink to="/rate" style={linkStyle}>
                 {t("rate")}
               </NavLink>
@@ -140,10 +126,9 @@ export default function Navbar() {
 
         {/* Right-side actions */}
         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-          {/* Dark Mode */}
           <DarkModeToggle />
 
-          {/* Cart + Track My Order */}
+          {/* USER ICONS */}
           {user && user.role !== "admin" && (
             <>
               <Link to="/cart">
@@ -156,7 +141,7 @@ export default function Navbar() {
 
               <Link to="/track-order">
                 <img
-                  src="https://tse1.mm.bing.net/th/id/OIP.OBIgGWiwQgbwu7_2FZZY7QHaHa?pid=Api&P=0&h=180"
+                  src="https://tse1.mm.bing.net/th/id/OIP.OBIgGWiwQgbwu7_2FZZY7QHaHa"
                   alt={t("trackorder")}
                   style={iconStyle}
                 />
@@ -164,35 +149,18 @@ export default function Navbar() {
             </>
           )}
 
-          {/* Guest order button */}
-          {!user && (
-            <Link
-              to="/login"
-              className="btn btn-primary"
-              style={{ background: "#dc2626", color: "#fff" }}
-            >
-              {t("order")}
-            </Link>
-          )}
-
-          {/* Admin icons */}
+          {/* ADMIN ICONS */}
           {user && user.role === "admin" && (
             <>
-              <Link
-                to="/adminpromos"
-                style={{ display: "flex", alignItems: "center" }}
-              >
+              <Link to="/adminpromos">
                 <img
-                  src="https://tse3.mm.bing.net/th/id/OIP._YAayfvyzHi9OgQ70JWJBgHaHa?pid=Api&P=0&h=180"
+                  src="https://tse3.mm.bing.net/th/id/OIP._YAayfvyzHi9OgQ70JWJBgHaHa"
                   alt={t("promotions")}
                   style={iconStyle}
                 />
               </Link>
 
-              <Link
-                to="/adminmenu"
-                style={{ display: "flex", alignItems: "center" }}
-              >
+              <Link to="/adminmenu">
                 <img
                   src="https://www.creativefabrica.com/wp-content/uploads/2023/05/10/Pizza-menu-logo-Decorative-color-design-Graphics-69339231-1-1-580x387.png"
                   alt={t("menu")}
@@ -213,7 +181,6 @@ export default function Navbar() {
             </button>
           )}
 
-          {/* Language Switcher */}
           <LanguageSwitcher />
         </div>
       </div>
